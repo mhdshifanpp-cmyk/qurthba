@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qurthba — Islamic Educational Institution</title>
+
+<style>
+:root{
+  --primary:#0b4f8a; --primary-dark:#07345d; --primary-light:#eaf4fb;
+  --background:#f5f8fc; --text:#172033; --muted:#6b7280; --border:#e2e8f0;
+  --success:#15803d; --warning:#b45309; --danger:#dc2626;
+  --radius:14px; --shadow:0 8px 30px rgba(15,23,42,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{font-family:Inter,"Noto Sans Malayalam","Noto Sans Arabic",Arial,sans-serif;background:var(--background);color:var(--text);min-height:100vh}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+a{color:var(--primary)}
+.hidden{display:none !important}
+
+/* ---------- Forms ---------- */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:9px;background:#fff}
+.field textarea{min-height:100px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--primary-light);border-color:var(--primary)}
+.error{color:var(--danger);font-size:13px;margin-bottom:10px;min-height:18px}
+.row{display:flex;gap:12px}
+.row>*{flex:1}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+.form-grid .full{grid-column:1/-1}
+.checks{display:flex;flex-wrap:wrap;gap:8px}
+.checks label{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text);border:1px solid var(--border);border-radius:8px;padding:6px 10px;margin:0}
+.decl{display:flex;gap:10px;align-items:flex-start;font-size:13px;margin:6px 0 14px}
+.decl input{width:auto;margin-top:3px}
+
+/* ---------- Buttons / badges ---------- */
+.btn{border:none;border-radius:9px;padding:10px 15px;font-weight:600;text-decoration:none;display:inline-block;text-align:center}
+.btn-sm{padding:6px 10px;font-size:12px}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-admission{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff !important;border:0;padding:9px 15px !important;box-shadow:0 6px 18px rgba(217,119,6,.28);font-weight:800 !important}
+.btn-admission:hover{transform:translateY(-1px);box-shadow:0 9px 24px rgba(217,119,6,.38)}
+.admission-hero-btn{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#172033;border:0;box-shadow:0 12px 28px rgba(245,158,11,.30);font-size:16px;font-weight:800}
+.admission-hero-btn:hover{transform:translateY(-2px);box-shadow:0 16px 34px rgba(245,158,11,.40)}
+.admission-card{border:2px solid rgba(245,158,11,.28);background:linear-gradient(135deg,#fff,#fffaf0);position:relative;overflow:hidden}
+.admission-card:before{content:"";position:absolute;inset:0 auto auto 0;width:100%;height:4px;background:linear-gradient(90deg,#f59e0b,#0b4f8a)}
+.quick-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.quick-action{display:flex;align-items:center;gap:12px;padding:15px;border:1px solid var(--border);border-radius:12px;background:#fff;text-decoration:none;color:var(--text);transition:.2s}
+.quick-action:hover{border-color:#f59e0b;transform:translateY(-2px);box-shadow:var(--shadow)}
+.calendar-working{background:#dcfce7;color:#166534}
+.calendar-off{background:#fee2e2;color:#991b1b}
+.att-present{background:#dcfce7;color:#166534}
+.att-absent{background:#fee2e2;color:#991b1b}
+.att-late{background:#fef3c7;color:#92400e}
+@media (max-width:700px){.quick-actions{grid-template-columns:1fr}.btn-admission{display:inline-block !important}}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-secondary{background:#eef2f7;color:var(--text)}
+.btn-light{background:#fff;color:var(--primary-dark)}
+.btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.55)}
+.btn-block{width:100%}
+.btn:focus-visible,.nav-item:focus-visible,a:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.badge{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:600}
+.badge-success{background:#dcfce7;color:var(--success)}
+.badge-danger{background:#fee2e2;color:var(--danger)}
+.badge-warning{background:#fef3c7;color:var(--warning)}
+.badge-info{background:var(--primary-light);color:var(--primary)}
+
+/* Profile Avatar styles */
+.user-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--border);background:#e2e8f0}
+.user-avatar-lg{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--primary);background:#e2e8f0}
+
+/* ==========================================
+   HOME PAGE
+========================================== */
+.site-header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--border)}
+.site-header-inner{max-width:1100px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.site-nav{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.site-nav a.link{color:var(--text);text-decoration:none;padding:8px 12px;border-radius:8px;font-size:14px;font-weight:500}
+.site-nav a.link:hover{background:var(--primary-light);color:var(--primary)}
+.hero{background-color:var(--primary-dark);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='.09'%3E%3Crect x='15' y='15' width='30' height='30'/%3E%3Crect x='15' y='15' width='30' height='30' transform='rotate(45 30 30)'/%3E%3C/g%3E%3C/svg%3E"),linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;padding:90px 20px 100px}
+.hero-inner{max-width:1100px;margin:0 auto}
+.hero h1{font-size:clamp(44px,8vw,84px);letter-spacing:-.02em;line-height:1}
+.hero .kind{font-size:18px;opacity:.9;margin-top:12px}
+.hero .tagline{font-size:clamp(20px,3vw,28px);margin-top:26px;font-weight:600;max-width:640px}
+.hero .cta{display:flex;gap:12px;margin-top:32px;flex-wrap:wrap}
+.section{max-width:1100px;margin:0 auto;padding:64px 20px}
+.section h2{font-size:28px;margin-bottom:8px}
+.section .lead{color:var(--muted);margin-bottom:28px;max-width:640px}
+.vm-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.vm-card h3{font-size:20px;margin-bottom:12px}
+.vm-card p,.vm-card li{line-height:1.7;color:#334155}
+.vm-card ul{padding-inline-start:20px}
+.vm-card li{margin-bottom:6px}
+.band{background:#fff;border-block:1px solid var(--border)}
+.contact-grid{display:grid;grid-template-columns:1fr 1.3fr;gap:24px;align-items:start}
+.contact-item{margin-bottom:20px}
+.contact-item span{display:block;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:4px}
+.contact-item a{font-size:20px;font-weight:600;text-decoration:none;word-break:break-all}
+.contact-item a:hover{text-decoration:underline}
+.success-box{background:#dcfce7;border-radius:12px;padding:20px}
+.success-box h3{color:var(--success);margin-bottom:8px}
+.site-footer{background:var(--primary-dark);color:rgba(255,255,255,.8);text-align:center;padding:24px 20px;font-size:13px}
+
+/* ---------- Login ---------- */
+#loginScreen{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,var(--primary-dark),var(--primary))}
+.login-box{background:#fff;border-radius:18px;padding:34px;width:100%;max-width:410px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.login-box h2{text-align:center;margin:14px 0 4px}
+.login-box .sub{text-align:center;color:var(--muted);font-size:13px;margin-bottom:20px}
+.back-link{display:block;text-align:center;margin-top:16px;font-size:14px}
+
+/* ---------- Sidebar ---------- */
+.sidebar{position:fixed;inset-block:0;inset-inline-start:0;width:250px;background:#fff;border-inline-end:1px solid var(--border);padding:20px;z-index:100;overflow-y:auto}
+.logo{display:flex;align-items:center;gap:12px;margin-bottom:30px}
+.login-box .logo{justify-content:center;margin-bottom:6px}
+.logo-icon{width:42px;height:42px;display:grid;place-items:center;background:var(--primary);color:#fff;border-radius:12px;font-size:20px}
+.logo-text strong{display:block;font-size:16px}
+.logo-text span{color:var(--muted);font-size:11px}
+.nav-item{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;margin-bottom:5px;border-radius:10px;color:var(--muted);transition:.2s;cursor:pointer}
+.nav-item:hover,.nav-item.active{background:var(--primary-light);color:var(--primary)}
+
+/* ---------- Main ---------- */
+.main{margin-inline-start:250px;min-height:100vh}
+.topbar{height:72px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;gap:12px}
+.topbar-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.userchip{font-size:13px;color:var(--muted);text-align:end;line-height:1.3}
+.userchip strong{display:block;color:var(--text)}
+.topbar select{padding:8px;border:1px solid var(--border);border-radius:8px}
+.content{padding:28px}
+
+/* ---------- Cards / grid ---------- */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.stat-number{font-size:30px;font-weight:700;margin-top:8px}
+.stat-label{color:var(--muted);font-size:13px}
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.head-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.muted{color:var(--muted)}
+.mt{margin-top:25px}
+.note{font-size:12px;color:var(--muted);margin-top:14px}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.notice{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+
+/* ---------- Tables ---------- */
+.table-wrapper{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th,td{padding:14px;text-align:start;border-bottom:1px solid var(--border);white-space:nowrap}
+th{font-size:12px;color:var(--muted);background:#f8fafc}
+td input[type=number]{width:90px;padding:7px 9px;border:1px solid var(--border);border-radius:8px}
+.empty{padding:30px;text-align:center;color:var(--muted)}
+.inline-form{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:16px}
+.inline-form .field{margin:0;flex:1;min-width:130px}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
+
+/* ---------- Class chips ---------- */
+.class-row{border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
+.class-row-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:8px;background:var(--primary-light);color:var(--primary);border-radius:999px;padding:6px 6px 6px 12px;font-size:13px;font-weight:600;margin:0 6px 6px 0}
+.chip small{color:var(--muted);font-weight:500}
+.chip button{border:none;background:#fff;color:var(--danger);width:20px;height:20px;border-radius:50%;line-height:1;font-weight:700}
+
+/* ---------- Complaints / meetings ---------- */
+.complaint{border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
+.complaint-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.complaint p{white-space:pre-wrap;margin:6px 0}
+.reply{background:var(--primary-light);border-radius:8px;padding:10px 12px;margin-top:10px;font-size:14px;white-space:pre-wrap}
+.complaint-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.detail-list{display:grid;grid-template-columns:140px 1fr;gap:8px 14px;font-size:14px}
+.detail-list dt{color:var(--muted);font-weight:600}
+.detail-list dd{white-space:pre-wrap;word-break:break-word}
+
+/* ---------- Charts ---------- */
+.chart-card h3{font-size:16px;margin-bottom:10px}
+
+/* ---------- Modal / toast ---------- */
+.overlay{position:fixed;inset:0;background:rgba(15,23,42,.5);display:grid;place-items:center;z-index:500;padding:16px}
+.modal{background:#fff;border-radius:16px;padding:26px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto}
+.modal h3{margin-bottom:16px}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:8px}
+#toast{position:fixed;bottom:24px;inset-inline-end:24px;background:var(--primary-dark);color:#fff;padding:12px 18px;border-radius:10px;z-index:900;opacity:0;transform:translateY(10px);transition:.25s;pointer-events:none}
+#toast.show{opacity:1;transform:none}
+
+/* ---------- Professional PDF Print Styles ---------- */
+#printArea{display:none}
+.pd{font-family:Inter, Arial, sans-serif;color:#172033;padding:20px}
+.pd-header{display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--primary);padding-bottom:12px;margin-bottom:20px}
+.pd-logo{display:flex;align-items:center;gap:12px}
+.pd-logo-icon{width:48px;height:48px;background:var(--primary);color:#fff;border-radius:12px;display:grid;place-items:center;font-size:24px;font-weight:bold}
+.pd h1{font-size:24px;color:var(--primary-dark);margin:0}
+.pd .institution-subtitle{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.pd h2{font-size:16px;margin:20px 0 8px;color:var(--primary-dark);border-bottom:1px solid var(--border);padding-bottom:4px}
+.pd .meta-box{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pd table{width:100%;border-collapse:collapse;margin-bottom:16px}
+.pd th,.pd td{border:1px solid var(--border);padding:8px 10px;font-size:12px;text-align:start}
+.pd th{background:var(--primary-light);color:var(--primary-dark);font-weight:700}
+.pd .sum{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;background:#f8fafc;padding:14px;border-radius:8px;margin:16px 0;font-size:13px;border:1px solid var(--border)}
+.pd .foot{font-size:11px;color:var(--muted);margin-top:24px;border-top:1px solid var(--border);padding-top:10px;text-align:center}
+@page{margin:12mm}
+@media print{
+  body{background:#fff}
+  #homeScreen,#loginScreen,#appShell,#modalRoot,#toast{display:none !important}
+  #printArea{display:block !important}
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width:1000px){
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .sidebar{width:220px}.main{margin-inline-start:220px}
+  .split,.vm-grid,.contact-grid{grid-template-columns:1fr}
+}
+@media (max-width:700px){
+  .site-nav a.link{display:none}
+  .hero{padding:60px 20px 70px}
+  .form-grid{grid-template-columns:1fr}
+  .sidebar{position:static;width:100%;border-inline-end:0;border-bottom:1px solid var(--border);padding:12px}
+  .sidebar .logo{margin-bottom:10px}
+  #navigation{display:flex;gap:6px;overflow-x:auto}
+  .nav-item{white-space:nowrap;width:auto;margin-bottom:0}
+  .main{margin-inline-start:0}
+  .content{padding:16px}
+  .grid{grid-template-columns:1fr}
+  .topbar{padding:10px 16px;height:auto;min-height:64px}
+  .row{flex-direction:column;gap:0}
+  .detail-list{grid-template-columns:1fr}
+}
+[dir="rtl"]{text-align:right}
+</style>
+</head>
+
+<body>
+
+<div id="homeScreen">
+  <header class="site-header">
+    <div class="site-header-inner">
+      <div class="logo" style="margin:0">
+        <div class="logo-icon" style="background:linear-gradient(135deg,#0b4f8a,#07345d)">🏛️</div>
+        <div class="logo-text"><strong>Qurthba</strong><span>Islamic Education</span></div>
+      </div>
+      <nav class="site-nav" aria-label="Site">
+        <a class="link" href="#vision">🏡 Vision &amp; Mission</a>
+        <a class="btn btn-admission" href="#apply">📝 Admissions</a>
+        <a class="link" href="#contact">📞 Contact</a>
+        <button class="btn btn-primary" onclick="showLogin()">🔐 Login</button>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <h1>Qurthba</h1>
+      <p class="kind">Islamic Educational Institution</p>
+      <p class="tagline">Knowledge. Character. Excellence.</p>
+      <div class="cta">
+        <a class="btn admission-hero-btn" href="#apply">📝 Start Admission</a>
+        <button class="btn btn-ghost" onclick="showLogin()">🔐 Login to your account</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="vision">
+    <h2>🏡 Vision &amp; Mission</h2>
+    <p class="lead">What we are working toward, and how we get there.</p>
+    <div class="vm-grid">
+      <div class="card vm-card">
+        <h3>Our vision</h3>
+        <p>To raise a generation grounded in the Qur'an and the Sunnah, who pair sound knowledge with noble character and use both to serve their families, their community and the wider world.</p>
+      </div>
+      <div class="card vm-card">
+        <h3>Our mission</h3>
+        <ul>
+          <li>Teach the Qur'an, Hadith, Fiqh and Arabic with accuracy and understanding.</li>
+          <li>Build adab, discipline and honesty in every student.</li>
+          <li>Offer a balanced curriculum alongside our Islamic studies.</li>
+          <li>Work closely with parents so that every child is known and supported.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="band">
+    <section class="section" id="apply">
+      <h2>📝 Apply for admission</h2>
+      <p class="lead">Fill in the details below. We will contact the parent or guardian after reviewing the application.</p>
+
+      <div class="card admission-card" style="margin-bottom:18px">
+        <div class="card-head" style="margin-bottom:8px">
+          <div>
+            <span class="badge badge-warning">ADMISSIONS OPEN</span>
+            <h3 style="font-size:24px;margin-top:8px">Begin a new student admission</h3>
+            <p class="muted" style="margin-top:6px">Complete the application once. The administration can review, accept, and automatically add the student record into the system from the dashboard.</p>
+          </div>
+          <a class="btn admission-hero-btn" href="#ap_name">Apply Now →</a>
+        </div>
+      </div>
+
+      <div class="card" id="applyCard">
+        <div class="form-grid">
+          <div class="field"><label for="ap_name">Student's full name *</label><input id="ap_name" autocomplete="off"></div>
+          <div class="field"><label for="ap_gender">Gender *</label>
+            <select id="ap_gender"><option value="">Select</option><option>Male</option><option>Female</option></select></div>
+          <div class="field"><label for="ap_dob">Date of birth *</label><input id="ap_dob" type="date"></div>
+          <div class="field"><label for="ap_class">Class applying for *</label><input id="ap_class" list="classList" placeholder="e.g. 10"><datalist id="classList"></datalist></div>
+          <div class="field"><label for="ap_father">Father's name *</label><input id="ap_father"></div>
+          <div class="field"><label for="ap_mother">Mother's name *</label><input id="ap_mother"></div>
+          <div class="field"><label for="ap_phone">Parent / guardian phone *</label><input id="ap_phone" type="tel" placeholder="10-digit number"></div>
+          <div class="field"><label for="ap_email">Email (optional)</label><input id="ap_email" type="email"></div>
+          <div class="field full"><label for="ap_address">Home address *</label><textarea id="ap_address" style="min-height:80px"></textarea></div>
+          <div class="field"><label for="ap_prev">Previous school (if any)</label><input id="ap_prev"></div>
+          <div class="field"><label for="ap_notes">Medical or other notes (optional)</label><input id="ap_notes"></div>
+        </div>
+        <label class="decl"><input type="checkbox" id="ap_decl"> <span>I confirm that the information given above is correct.</span></label>
+        <div class="error" id="ap_err"></div>
+        <button class="btn btn-primary" onclick="submitApplication()">Submit application</button>
+      </div>
+
+      <div class="success-box hidden" id="applyDone">
+        <h3>Application received</h3>
+        <p id="applyDoneText" style="margin-bottom:14px"></p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="emailApplication()">Also email this application to us</button>
+          <button class="btn btn-secondary" onclick="resetApplication()">Submit another</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="section" id="contact">
+    <h2>📞 Contact us</h2>
+    <p class="lead">Call us, write to us, or send a message from this page.</p>
+    <div class="contact-grid">
+      <div class="card">
+        <div class="contact-item"><span>Phone</span><a href="tel:+919544986295">9544986295</a></div>
+        <div class="contact-item" style="margin-bottom:0"><span>Email</span><a href="mailto:mhdshifanpp@gmail.com">mhdshifanpp@gmail.com</a></div>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:14px">Send us a message</h3>
+        <div class="row">
+          <div class="field"><label for="ct_name">Your name *</label><input id="ct_name"></div>
+          <div class="field"><label for="ct_email">Your email *</label><input id="ct_email" type="email"></div>
+        </div>
+        <div class="field"><label for="ct_subject">Subject *</label><input id="ct_subject"></div>
+        <div class="field"><label for="ct_msg">Message *</label><textarea id="ct_msg"></textarea></div>
+        <div class="error" id="ct_err"></div>
+        <button class="btn btn-primary" onclick="sendMail()">Send email</button>
+        <p class="note">This opens your email app with the message ready to send to us.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">© <span id="yr"></span> Qurthba Islamic Educational Institution</footer>
+</div>
+
+<div id="loginScreen" class="hidden">
+  <div class="login-box">
+    <div class="logo">
+      <div class="logo-icon" style="background:linear-gradient(135deg,#0b4f8a,#07345d)">🔐</div>
+      <div class="logo-text"><strong>Qurthba</strong><span>Islamic Education</span></div>
+    </div>
+    <h2>Sign in</h2>
+    <p class="sub">Choose your account type and enter your details</p>
+    <div class="field">
+      <label for="loginRole">Account type</label>
+      <select id="loginRole">
+        <option value="admin">Admin</option>
+        <option value="teacher">Teacher</option>
+        <option value="student">Student</option>
+      </select>
+    </div>
+    <div class="field"><label for="loginUser">Username</label><input id="loginUser" autocomplete="username"></div>
+    <div class="field"><label for="loginPass">Password</label><input id="loginPass" type="password" autocomplete="current-password"></div>
+    <div class="error" id="loginError"></div>
+    <button class="btn btn-primary btn-block" onclick="login()">Login</button>
+    <a class="back-link" href="#" onclick="showHome();return false">🏠 Back to home</a>
+  </div>
+</div>
+
+<div id="appShell" class="hidden">
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon" style="background:linear-gradient(135deg,#0b4f8a,#07345d)">🏛️</div>
+      <div class="logo-text"><strong>Qurthba</strong><span>Islamic Education</span></div>
+    </div>
+    <nav id="navigation"></nav>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <strong id="pageTitle">Dashboard</strong>
+      <div class="topbar-right">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <img id="chipAvatar" src="" alt="Avatar" class="user-avatar" style="display:none;">
+          <div class="userchip"><strong id="chipName"></strong><span id="chipRole"></span></div>
+        </div>
+        <select id="langSelect" onchange="changeLanguage(this.value)" aria-label="Language">
+          <option value="en">English</option>
+          <option value="ml">മലയാളം</option>
+          <option value="ar">العربية</option>
+        </select>
+        <button class="btn btn-secondary" onclick="openAccount()" id="accountBtn">Account</button>
+        <button class="btn btn-secondary" onclick="logout()" id="logoutBtn">Logout</button>
+      </div>
+    </header>
+    <section class="content"><div id="app"></div></section>
+  </main>
+</div>
+
+<div id="modalRoot"></div>
+<div id="toast"></div>
+<div id="printArea"></div>
+
+<script>
+const SCHOOL = { name:"Qurthba", phone:"9544986295", email:"mhdshifanpp@gmail.com" };
+const DEFAULT_PASSWORD = "123456";
+const STORE_KEY = "qurthba_db_v4";
+const SESSION_KEY = "qurthba_session_v4";
+
+function defaultDb(){
+  return {
+    settings:{ attendanceRequirement:75, academicYear:"2026–2027", schoolCalendar:{} },
+    users:[
+      {id:"U-001", username:"admin",   password:DEFAULT_PASSWORD, role:"admin",   name:"Administrator", refId:null,      photo:""},
+      {id:"U-002", username:"teacher", password:DEFAULT_PASSWORD, role:"teacher", name:"Teacher",       refId:"TCH-001", photo:""},
+      {id:"U-003", username:"student", password:DEFAULT_PASSWORD, role:"student", name:"Student",       refId:"STU-001", photo:""}
+    ],
+    classes:[ {id:"CL-001", name:"10", divisions:["A","B"]} ],
+    students:[ {id:"STU-001", name:"Student", class:"10A", attendance:90, eligibility:"ELIGIBLE", override:false, status:"ACTIVE"} ],
+    teachers:[ {id:"TCH-001", name:"Teacher", classes:["10A","10B"]} ],
+    exams:[ {id:"EX-001", name:"Term 1"}, {id:"EX-002", name:"Term 2"}, {id:"EX-003", name:"Final"} ],
+    subjects:[
+      {id:"SUB-001", name:"Qur'an", type:"SYLLABUS",     max:100},
+      {id:"SUB-002", name:"Fiqh",   type:"SYLLABUS",     max:100},
+      {id:"SUB-003", name:"Hadith", type:"SYLLABUS",     max:100},
+      {id:"SUB-004", name:"Arabic", type:"SYLLABUS",     max:100},
+      {id:"SUB-005", name:"Arts",   type:"NON_SYLLABUS", max:50},
+      {id:"SUB-006", name:"Sports", type:"NON_SYLLABUS", max:50}
+    ],
+    marks:[], complaints:[], applications:[], meetings:[], auditLogs:[], attendanceLog:[]
+  };
+}
+function loadDb(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(raw){
+      const d = JSON.parse(raw);
+      const def = defaultDb();
+      Object.keys(def).forEach(k => { if(d[k] === undefined) d[k] = def[k]; });
+      if(!d.settings.schoolCalendar) d.settings.schoolCalendar = {};
+      if(!Array.isArray(d.attendanceLog)) d.attendanceLog = [];
+      return d;
+    }
+  }catch(e){}
+  return defaultDb();
+}
+function saveDb(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(db)); }catch(e){} }
+
+let db = loadDb();
+let currentUser = null;
+let currentPage = "dashboard";
+let lang = "en";
+
+function esc(v){ return String(v ?? "").replace(/[&<>\"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function $(id){ return document.getElementById(id); }
+function toast(msg){ const el = $("toast"); el.textContent = msg; el.classList.add("show"); clearTimeout(toast._t); toast._t = setTimeout(()=>el.classList.remove("show"), 2800); }
+function nextId(prefix, list, pad){ const nums = list.map(x => parseInt(String(x.id).split("-")[1],10)).filter(n => !isNaN(n)); return prefix + "-" + String((nums.length ? Math.max(...nums) : 0) + 1).padStart(pad || 3, "0"); }
+function audit(action, details){ db.auditLogs.unshift({ id:"AUD-"+Date.now(), timestamp:new Date().toLocaleString(), actor:currentUser ? currentUser.name : "Visitor", action, details:details || "" }); saveDb(); }
+function roleLabel(r){ return r.charAt(0).toUpperCase()+r.slice(1); }
+function usernameTaken(u, exceptId){ return db.users.some(x => x.id !== exceptId && x.username.toLowerCase() === u.toLowerCase()); }
+function fmt(n){ return n === null || n === undefined ? "–" : String(Math.round(n*100)/100); }
+const PHONE_RE = /^[0-9+\-\s]{10,15}$/;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const permissions = { admin:["students.read","students.create","students.delete","students.edit","teachers.read","teachers.create","teachers.delete","users.read","users.create","users.delete","users.edit","classes.manage","exams.manage","applications.manage","attendance.read","attendance.update","marks.update","eligibility.override","audit.read","complaints.manage","meetings.manage"], teacher:["students.read","attendance.read","attendance.update","marks.update","complaints.file","meetings.manage"], student:["complaints.file"] };
+function can(p){ return !!currentUser && (permissions[currentUser.role] || []).includes(p); }
+function allLabels(){ const out = []; db.classes.forEach(c => c.divisions.forEach(d => out.push(c.name + d))); return out; }
+function visibleClasses(){ if(currentUser.role === "admin") return allLabels(); if(currentUser.role === "teacher"){ const tc = db.teachers.find(x => x.id === currentUser.refId); return tc ? tc.classes.filter(c => allLabels().includes(c)) : []; } const s = db.students.find(x => x.id === currentUser.refId); return s ? [s.class] : []; }
+function visibleStudents(){ if(!currentUser) return []; if(currentUser.role === "admin") return db.students; if(currentUser.role === "teacher"){ const cls = visibleClasses(); return db.students.filter(s => cls.includes(s.class)); } return db.students.filter(s => s.id === currentUser.refId); }
+function classOptions(selected){ const labels = allLabels(); return labels.length ? labels.map(l => `<option ${l===selected?"selected":""}>${esc(l)}</option>`).join("") : `<option value="">No classes yet</option>`; }
+function gradeOf(p){ if(p === null || p === undefined) return "–"; if(p >= 90) return "A+"; if(p >= 80) return "A"; if(p >= 70) return "B+"; if(p >= 60) return "B"; if(p >= 50) return "C"; if(p >= 40) return "D"; return "F"; }
+function gradeBadge(g){ const cls = {"A+":"badge-success","A":"badge-success","B+":"badge-success","B":"badge-info","C":"badge-info","D":"badge-warning","F":"badge-danger"}[g]; return cls ? `<span class="badge ${cls}">${g}</span>` : `<span class="muted">–</span>`; }
+function findMark(studentId, examId, subjectId){ return db.marks.find(m => m.studentId===studentId && m.examId===examId && m.subjectId===subjectId); }
+function calcStudent(studentId, examId){ let total = 0, max = 0, count = 0; db.subjects.filter(s => s.type === "SYLLABUS").forEach(sub=>{ const m = findMark(studentId, examId, sub.id); if(m){ total += m.score; max += m.max; count++; } }); const pct = max ? total / max * 100 : null; return {total, max, count, pct, avg: count ? total / count : null, grade: gradeOf(pct)}; }
+function rankOf(student, examId){ const peers = db.students.filter(s => s.class === student.class).map(s => ({id:s.id, c:calcStudent(s.id, examId)})).filter(x => x.c.count > 0); const me = peers.find(p => p.id === student.id); if(!me) return {rank:null, of:peers.length}; return {rank: 1 + peers.filter(p => p.c.pct > me.c.pct).length, of:peers.length}; }
+function recalculateEligibility(){ db.students.forEach(s=>{ if(s.override) return; s.eligibility = s.attendance >= db.settings.attendanceRequirement ? "ELIGIBLE" : "NOT_ELIGIBLE"; }); }
+function showScreen(name){ $("homeScreen").classList.toggle("hidden", name !== "home"); $("loginScreen").classList.toggle("hidden", name !== "login"); $("appShell").classList.toggle("hidden", name !== "app"); window.scrollTo(0, 0); }
+function showHome(){ showScreen("home"); const names = [...new Set(db.classes.map(c => c.name))]; $("classList").innerHTML = names.map(n => `<option value="${esc(n)}">`).join(""); $("ap_dob").max = new Date().toISOString().slice(0,10); $("yr").textContent = new Date().getFullYear(); }
+function showLogin(){ $("loginError").textContent = ""; showScreen("login"); $("loginUser").focus(); }
+function login(){ const role = $("loginRole").value; const username = $("loginUser").value.trim().toLowerCase(); const password = $("loginPass").value; const user = db.users.find(u => u.username.toLowerCase() === username && u.password === password && u.role === role); if(!user){ $("loginError").textContent = "Incorrect username, password or account type."; return; } currentUser = user; try{ sessionStorage.setItem(SESSION_KEY, user.id); }catch(e){} $("loginError").textContent = ""; $("loginPass").value = ""; audit("Login", roleLabel(user.role)); startApp(); }
+function logout(){ if(currentUser) audit("Logout", roleLabel(currentUser.role)); currentUser = null; try{ sessionStorage.removeItem(SESSION_KEY); }catch(e){} closeModal(); currentPage = "dashboard"; $("loginUser").value = ""; showHome(); }
+function startApp(){ showScreen("app"); $("chipName").textContent = currentUser.name; $("chipRole").textContent = roleLabel(currentUser.role); const avatarEl = $("chipAvatar"); if(currentUser.photo){ avatarEl.src = currentUser.photo; avatarEl.style.display = "block"; } else { avatarEl.style.display = "none"; } navigate("dashboard"); }
+document.addEventListener("keydown", e=>{ if(e.key === "Enter" && !$("loginScreen").classList.contains("hidden")) login(); if(e.key === "Escape") closeModal(); });
+const translations = { en:{dashboard:"Dashboard",students:"Students",teachers:"Teachers",users:"Users",classes:"Classes",exams:"Exams & Subjects",applications:"Applications",attendance:"Attendance",marks:"Enter Marks",eligibility:"Eligibility",results:"Results",meetings:"Live Meetings",complaints:"Complaints",audit:"Audit Logs",calendar:"School Calendar",logout:"Logout",account:"Account"}, ml:{dashboard:"ഡാഷ്ബോർഡ്",students:"വിദ്യാർത്ഥികൾ",teachers:"അധ്യാപകർ",users:"ഉപയോക്താക്കൾ",classes:"ക്ലാസുകൾ",exams:"പരീക്ഷകളും വിഷയങ്ങളും",applications:"അപേക്ഷകൾ",attendance:"ഹാജർ",marks:"മാർക്ക് നൽകുക",eligibility:"യോഗ്യത",results:"ഫലങ്ങൾ",meetings:"ലൈവ് മീറ്റിംഗുകൾ",complaints:"പരാതികൾ",audit:"ഓഡിറ്റ് ലോഗ്",calendar:"സ്കൂൾ കലണ്ടർ",logout:"ലോഗൗട്ട്",account:"അക്കൗണ്ട്"}, ar:{dashboard:"لوحة التحكم",students:"الطلاب",teachers:"المعلمون",users:"المستخدمون",classes:"الفصول",exams:"الامتحانات والمواد",applications:"الطلبات",attendance:"الحضور",marks:"إدخال الدرجات",eligibility:"الأهلية",results:"النتائج",meetings:"الاجتماعات المباشرة",complaints:"الشكاوى",audit:"سجل التدقيق",calendar:"تقويم المدرسة",logout:"تسجيل الخروج",account:"الحساب"} };
+function t(key){ return (translations[lang] && translations[lang][key]) || translations.en[key] || key; }
+const NAV = { admin:[["dashboard","📊"],["students","👨‍🎓"],["teachers","👨‍🏫"],["users","👥"],["classes","🏫"],["exams","📚"],["applications","📝"],["attendance","✓"],["calendar","📅"],["marks","✏️"],["eligibility","🎓"],["results","📈"],["meetings","🎥"],["complaints","📩"],["audit","🔐"]], teacher:[["dashboard","📊"],["students","👨‍🎓"],["attendance","✓"],["marks","✏️"],["results","📈"],["meetings","🎥"],["complaints","📩"]], student:[["dashboard","📊"],["results","📈"],["eligibility","🎓"],["meetings","🎥"],["complaints","📩"]] };
+function buildNav(){ $("navigation").innerHTML = NAV[currentUser.role].map(([k,icon]) => `<a class="nav-item ${k===currentPage?"active":""}" tabindex="0" onclick="navigate('${k}')">${icon} ${esc(t(k))}</a>`).join(""); $("logoutBtn").textContent = t("logout"); $("accountBtn").textContent = t("account"); }
+function navigate(page){ if(!currentUser) return; currentPage = page; syncAttendancePercentages(); recalculateEligibility(); buildNav(); $("pageTitle").textContent = t(page); const pages = { dashboard:renderDashboard, students:renderStudents, teachers:renderTeachers, users:renderUsers, classes:renderClasses, exams:renderExams, applications:renderApplications, attendance:renderAttendance, marks:renderMarks, calendar:renderCalendar, eligibility:renderEligibility, results:renderResults, meetings:renderMeetings, complaints:renderComplaints, audit:renderAudit }; const allowed = NAV[currentUser.role].some(([k]) => k === page); if(!allowed || !pages[page]){ showAccessDenied(); return; } pages[page](); }
+function changeLanguage(l){ lang = l; document.documentElement.dir = l === "ar" ? "rtl" : "ltr"; document.documentElement.lang = l; if(currentUser) navigate(currentPage); }
+function showAccessDenied(){ $("app").innerHTML = `<div class="card" style="text-align:center;padding:60px"><h2>Access Restricted</h2><p class="muted" style="margin:10px 0 20px">You do not have permission to open this page.</p><button class="btn btn-primary" onclick="navigate('dashboard')">Return to Dashboard</button></div>`; }
+function openModal(html){ $("modalRoot").innerHTML = `<div class="overlay" onclick="if(event.target===this)closeModal()"><div class="modal">${html}</div></div>`; }
+function closeModal(){ $("modalRoot").innerHTML = ""; }
+let lastApplication = null;
+function submitApplication(){ const v = id => $(id).value.trim(); const a = { name:v("ap_name"), gender:v("ap_gender"), dob:v("ap_dob"), cls:v("ap_class"), father:v("ap_father"), mother:v("ap_mother"), phone:v("ap_phone"), email:v("ap_email"), address:v("ap_address"), prevSchool:v("ap_prev"), notes:v("ap_notes") }; const err = $("ap_err"); if(!a.name || !a.gender || !a.dob || !a.cls || !a.father || !a.mother || !a.phone || !a.address) return err.textContent = "Please fill in all fields marked with *."; if(new Date(a.dob) > new Date()) return err.textContent = "Date of birth cannot be in the future."; if(!PHONE_RE.test(a.phone)) return err.textContent = "Enter a valid phone number (10 to 15 digits)."; if(a.email && !EMAIL_RE.test(a.email)) return err.textContent = "Enter a valid email address or leave it empty."; if(!$("ap_decl").checked) return err.textContent = "Please confirm that the information is correct."; err.textContent = ""; a.id = nextId("APP", db.applications); a.date = new Date().toLocaleString(); a.status = "PENDING"; db.applications.unshift(a); audit("Application Submitted", `${a.name} (${a.id}), class ${a.cls}`); lastApplication = a; $("applyDoneText").textContent = `Thank you. Your application number is ${a.id}. We will contact ${a.father} on ${a.phone}.`; $("applyCard").classList.add("hidden"); $("applyDone").classList.remove("hidden"); }
+function resetApplication(){ ["ap_name","ap_gender","ap_dob","ap_class","ap_father","ap_mother","ap_phone","ap_email","ap_address","ap_prev","ap_notes"].forEach(id => $(id).value = ""); $("ap_decl").checked = false; $("applyCard").classList.remove("hidden"); $("applyDone").classList.add("hidden"); }
+function applicationText(a){ return [ `Application ${a.id}`, `Student: ${a.name}`, `Gender: ${a.gender}`, `Date of birth: ${a.dob}`, `Class applying for: ${a.cls}`, `Father: ${a.father}`, `Mother: ${a.mother}`, `Phone: ${a.phone}`, `Email: ${a.email || "-"}`, `Address: ${a.address}`, `Previous school: ${a.prevSchool || "-"}`, `Notes: ${a.notes || "-"}` ].join("\n"); }
+function emailApplication(){ if(!lastApplication) return; const subject = `Admission application: ${lastApplication.name}`; window.location.href = `mailto:${SCHOOL.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(applicationText(lastApplication))}`; }
+function sendMail(){ const name = $("ct_name").value.trim(), email = $("ct_email").value.trim(); const subject = $("ct_subject").value.trim(), msg = $("ct_msg").value.trim(), err = $("ct_err"); if(!name || !email || !subject || !msg) return err.textContent = "Please fill in all fields."; if(!EMAIL_RE.test(email)) return err.textContent = "Enter a valid email address."; err.textContent = ""; const body = `${msg}\n\n— ${name}\n${email}`; window.location.href = `mailto:${SCHOOL.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`; }
+function appBadge(st){ return {PENDING:`<span class="badge badge-warning">Pending</span>`, ACCEPTED:`<span class="badge badge-success">Accepted</span>`, REJECTED:`<span class="badge badge-danger">Rejected</span>`}[st] || ""; }
+function renderApplications(){ if(!can("applications.manage")) return showAccessDenied(); const list = db.applications; $("app").innerHTML = `<div class="card"><div class="card-head"><div><h2>Admission applications</h2><p class="muted">Applications submitted from the home page. Accepting an application automatically provisions the student account.</p></div></div><div class="table-wrapper"><table><thead><tr><th>ID</th><th>Student</th><th>Gender</th><th>Date of birth</th><th>Class</th><th>Father</th><th>Phone</th><th>Status</th><th>Action</th></tr></thead><tbody>${list.length ? list.map(a=>`<tr><td>${esc(a.id)}</td><td>${esc(a.name)}</td><td>${esc(a.gender)}</td><td>${esc(a.dob)}</td><td>${esc(a.cls)}</td><td>${esc(a.father)}</td><td>${esc(a.phone)}</td><td>${appBadge(a.status)}</td><td><button class="btn btn-secondary btn-sm" onclick="viewApplication('${esc(a.id)}')">View</button><button class="btn btn-danger btn-sm" onclick="deleteApplication('${esc(a.id)}')">Delete</button></td></tr>`).join("") : `<tr><td colspan="9" class="empty">No applications yet.</td></tr>`}</tbody></table></div></div>`; }
+function viewApplication(id){ const a = db.applications.find(x => x.id === id); if(!a) return; const rows = [["Application",a.id],["Submitted",a.date],["Student",a.name],["Gender",a.gender],["Date of birth",a.dob],["Class applying for",a.cls],["Father",a.father],["Mother",a.mother],["Phone",a.phone],["Email",a.email||"-"],["Address",a.address],["Previous school",a.prevSchool||"-"],["Notes",a.notes||"-"]]; openModal(`<h3>${esc(a.name)}</h3><dl class="detail-list">${rows.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl><div class="field" style="margin-top:16px"><label for="app_status">Status</label><select id="app_status">${["PENDING","ACCEPTED","REJECTED"].map(s=>`<option value="${s}" ${a.status===s?"selected":""}>${s.charAt(0)+s.slice(1).toLowerCase()}</option>`).join("")}</select></div><div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Close</button><button class="btn btn-primary" onclick="saveApplicationStatus('${esc(a.id)}')">Save status</button></div>`); }
+function saveApplicationStatus(id){ if(!can("applications.manage")) return; const a = db.applications.find(x => x.id === id); if(!a) return; const prevStatus = a.status; const newStatus = $("app_status").value; a.status = newStatus; if(prevStatus !== "ACCEPTED" && newStatus === "ACCEPTED"){ const studentRefId = nextId("STU", db.students); db.students.push({id: studentRefId, name: a.name, class: a.cls, attendance: 100, eligibility: "ELIGIBLE", override: false, status: "ACTIVE"}); const usernameBase = a.name.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0,8) + Math.floor(Math.random()*900+100); db.users.push({id: nextId("U", db.users), username: usernameBase, password: DEFAULT_PASSWORD, role: "student", name: a.name, refId: studentRefId, photo: ""}); recalculateEligibility(); toast(`Accepted! Created student record ${studentRefId} with username: ${usernameBase}`); } else { toast("Status saved"); } audit("Application Status", `${a.id} ${a.name}: ${a.status}`); closeModal(); renderApplications(); }
+function deleteApplication(id){ if(!can("applications.manage")) return; const a = db.applications.find(x => x.id === id); if(!a) return; if(!confirm(`Delete application ${a.id} (${a.name})?`)) return; db.applications = db.applications.filter(x => x.id !== id); audit("Application Deleted", `${a.id} ${a.name}`); toast("Application deleted"); renderApplications(); }
+function renderDashboard(){ if(currentUser.role === "student") return renderStudentDashboard(); const list = visibleStudents(); const below = list.filter(s => s.eligibility === "NOT_ELIGIBLE"); const avg = list.length ? Math.round(list.reduce((a,s)=>a+s.attendance,0)/list.length) : 0; const open = db.complaints.filter(c => c.status === "OPEN").length; const pend = db.applications.filter(a => a.status === "PENDING").length; const isAdmin = currentUser.role === "admin"; $("app").innerHTML = `<div style="margin-bottom:25px"><h1>Qurthba — Knowledge. Character. Excellence.</h1><p class="muted" style="margin-top:5px">Institutional overview for ${esc(db.settings.academicYear)}</p></div><div class="grid"><div class="card"><div class="stat-label">${isAdmin?"Total Students":"My Students"}</div><div class="stat-number">${list.length}</div></div><div class="card"><div class="stat-label">Total Teachers</div><div class="stat-number">${db.teachers.length}</div></div><div class="card"><div class="stat-label">Average Attendance</div><div class="stat-number">${avg}%</div></div><div class="card"><div class="stat-label">Below Threshold</div><div class="stat-number" style="color:var(--danger)">${below.length}</div></div></div>${isAdmin && pend ? `<div class="card mt notice"><div><strong>${pend} pending application${pend===1?"":"s"}</strong><p class="muted">New admission applications to review</p></div><button class="btn btn-primary" onclick="navigate('applications')">Review applications</button></div>` : ""}${isAdmin && open ? `<div class="card mt notice"><div><strong>${open} open complaint${open===1?"":"s"}</strong><p class="muted">Waiting for your reply</p></div><button class="btn btn-primary" onclick="navigate('complaints')">Review complaints</button></div>` : ""}<div class="mt card"><h2>Attendance Alerts</h2><p class="muted" style="margin:8px 0 20px">Students requiring attention</p><div class="table-wrapper"><table><thead><tr><th>Student</th><th>Class</th><th>Attendance</th><th>Required</th><th>Status</th></tr></thead><tbody>${below.length ? below.map(s=>`<tr><td>${esc(s.name)}</td><td>${esc(s.class)}</td><td>${s.attendance}%</td><td>${db.settings.attendanceRequirement}%</td><td><span class="badge badge-danger">Not Eligible</span></td></tr>`).join("") : `<tr><td colspan="5" class="empty">No alerts. All students meet the requirement.</td></tr>`}</tbody></table></div></div>`; }
+function renderStudentDashboard(){ const s = db.students.find(x => x.id === currentUser.refId); if(!s){ $("app").innerHTML = `<div class="card empty">Your student record was not found.</div>`; return; } $("app").innerHTML = `<div style="margin-bottom:25px;display:flex;align-items:center;gap:16px;">${s.photo ? `<img src="${esc(s.photo)}" class="user-avatar-lg" alt="Photo">` : ''}<div><h1>Assalamu alaikum, ${esc(s.name)}</h1><p class="muted" style="margin-top:5px">Class ${esc(s.class)} · ${esc(db.settings.academicYear)}</p></div></div><div class="grid"><div class="card"><div class="stat-label">Student ID</div><div class="stat-number" style="font-size:22px">${esc(s.id)}</div></div><div class="card"><div class="stat-label">Class</div><div class="stat-number">${esc(s.class)}</div></div><div class="card"><div class="stat-label">Attendance</div><div class="stat-number">${s.attendance}%</div></div><div class="card"><div class="stat-label">Eligibility</div><div class="stat-number" style="font-size:18px"><span class="badge ${s.eligibility==="ELIGIBLE"?"badge-success":"badge-danger"}">${esc(s.eligibility.replace("_"," "))}</span></div></div></div>`; }
+function openAddUser(defaultRole){ if(!can("users.create")) return toast("Not authorized"); const r = defaultRole || "student"; const labels = allLabels(); openModal(`<h3>Add user & Student Record</h3><div class="field"><label for="f_role">User type</label><select id="f_role" onchange="toggleUserFields()"><option value="student" ${r==="student"?"selected":""}>Student</option><option value="teacher" ${r==="teacher"?"selected":""}>Teacher</option><option value="admin" ${r==="admin"?"selected":""}>Admin</option></select></div><div class="field"><label for="f_name">Full name</label><input id="f_name"></div><div class="field"><label for="f_photo">Profile Photo URL (optional)</label><input id="f_photo" placeholder="https://example.com/photo.jpg"></div><div id="grpStudent" class="row"><div class="field"><label for="f_class">Class</label><select id="f_class">${classOptions()}</select></div><div class="field"><label for="f_att">Attendance %</label><input id="f_att" type="number" min="0" max="100" value="100"></div></div><div id="grpTeacher" class="field"><label>Assigned classes</label><div class="checks">${labels.length ? labels.map(l=>`<label><input type="checkbox" class="cls_chk" value="${esc(l)}"> ${esc(l)}</label>`).join("") : `<span class="muted">Add classes first on the Classes page.</span>`}</div></div><div class="row"><div class="field"><label for="f_user">Username</label><input id="f_user" autocomplete="off"></div><div class="field"><label for="f_pass">Password</label><input id="f_pass" type="text" autocomplete="off" value="${esc(DEFAULT_PASSWORD)}"></div></div><div class="error" id="f_err"></div><div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="addUser()">Save</button></div>`); toggleUserFields(); }
+function toggleUserFields(){ const r = $("f_role").value; $("grpStudent").classList.toggle("hidden", r !== "student"); $("grpTeacher").classList.toggle("hidden", r !== "teacher"); }
+function addUser(){ if(!can("users.create")) return; const role = $("f_role").value, name = $("f_name").value.trim(), photo = $("f_photo").value.trim(); const user = $("f_user").value.trim(), pass = $("f_pass").value, err = $("f_err"); if(!name) return err.textContent = "Full name is required."; if(!user) return err.textContent = "Username is required."; if(pass.length < 6) return err.textContent = "Password must be at least 6 characters."; if(usernameTaken(user)) return err.textContent = "That username is already in use."; let refId = null; if(role === "student"){ const cls = $("f_class").value, att = Number($("f_att").value); if(!cls) return err.textContent = "Add a class first (Classes page)."; if($("f_att").value === "" || isNaN(att) || att < 0 || att > 100) return err.textContent = "Attendance must be between 0 and 100."; refId = nextId("STU", db.students); db.students.push({id:refId, name, class:cls, attendance:att, eligibility:"ELIGIBLE", override:false, status:"ACTIVE"}); recalculateEligibility(); } else if(role === "teacher"){ const classes = [...document.querySelectorAll(".cls_chk:checked")].map(c => c.value); refId = nextId("TCH", db.teachers); db.teachers.push({id:refId, name, classes}); } db.users.push({id:nextId("U", db.users), username:user, password:pass, role, name, refId, photo}); audit("User Added", `${roleLabel(role)}: ${name}${refId ? " ("+refId+")" : ""}`); closeModal(); toast(`${roleLabel(role)} added`); navigate(currentPage); }
+function renderStudents(){ if(!can("students.read")) return showAccessDenied(); const isAdmin = currentUser.role === "admin"; const list = visibleStudents(); $("app").innerHTML = `<div class="card"><div class="card-head"><div><h2>Students</h2><p class="muted">${isAdmin ? "Add, fully edit, remove and manage all student accounts and records" : "Students in your classes"}</p></div>${isAdmin ? `<button class="btn btn-primary" onclick="openAddUser('student')">+ Add Student</button>` : ""}</div><div class="table-wrapper"><table><thead><tr><th>Photo</th><th>Student ID</th><th>Name</th><th>Class</th><th>Attendance</th><th>Eligibility</th><th>Status</th>${isAdmin ? "<th>Action</th>" : ""}</tr></thead><tbody>${list.length ? list.map(s=>{ const u = db.users.find(x => x.refId === s.id); return `<tr><td>${s.photo ? `<img src="${esc(s.photo)}" class="user-avatar" alt="">` : '<span class="muted">–</span>'}</td><td>${esc(s.id)}</td><td>${esc(s.name)}</td><td>${esc(s.class)}</td><td>${s.attendance}%</td><td><span class="badge ${s.eligibility==="ELIGIBLE"?"badge-success":"badge-danger"}">${esc(s.eligibility.replace("_"," "))}</span></td><td>${esc(s.status)}</td>${isAdmin ? `<td><button class="btn btn-primary btn-sm" onclick="openEditStudent('${esc(s.id)}')">Edit Details</button><button class="btn btn-danger btn-sm" onclick="deleteStudent('${esc(s.id)}')">Delete</button></td>` : ""}</tr>`;}).join("") : `<tr><td colspan="8" class="empty">No students yet.</td></tr>`}</tbody></table></div></div>`; }
+function openEditStudent(studentId){ if(!can("students.read")) return toast("Not authorized"); const s = db.students.find(x => x.id === studentId); if(!s) return; const u = db.users.find(x => x.refId === s.id); openModal(`<h3>Edit Student Details — ${esc(s.name)}</h3><p class="muted" style="margin-bottom:14px">Student ID: ${esc(s.id)}</p><div class="field"><label for="es_name">Full Name</label><input id="es_name" value="${esc(s.name)}"></div><div class="field"><label for="es_class">Class</label><select id="es_class">${classOptions(s.class)}</select></div><div class="row"><div class="field"><label for="es_att">Attendance %</label><input id="es_att" type="number" min="0" max="100" value="${s.attendance}"></div><div class="field"><label for="es_status">Status</label><select id="es_status"><option value="ACTIVE" ${s.status==="ACTIVE"?"selected":""}>Active</option><option value="INACTIVE" ${s.status==="INACTIVE"?"selected":""}>Inactive</option></select></div></div><div class="field"><label for="es_photo">Profile Photo URL</label><input id="es_photo" value="${esc(s.photo || '')}" placeholder="https://example.com/photo.jpg"></div><div class="field"><label for="es_user">Username</label><input id="es_user" value="${esc(u ? u.username : '')}"></div><div class="field"><label for="es_pass">New Password (leave blank to keep current)</label><input id="es_pass" type="text" placeholder="New password"></div><div class="error" id="es_err"></div><div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveEditStudent('${esc(s.id)}')">Save all changes</button></div>`); }
+function saveEditStudent(studentId){ if(!can("students.read")) return; const s = db.students.find(x => x.id === studentId); if(!s) return; const name = $("es_name").value.trim(); const cls = $("es_class").value; const att = Number($("es_att").value); const status = $("es_status").value; const photo = $("es_photo").value.trim(); const username = $("es_user").value.trim(); const password = $("es_pass").value; const err = $("es_err"); if(!name) return err.textContent = "Name is required."; if(isNaN(att) || att < 0 || att > 100) return err.textContent = "Attendance must be between 0 and 100."; const u = db.users.find(x => x.refId === s.id); if(username && u && usernameTaken(username, u.id)) return err.textContent = "Username already taken."; if(password && password.length < 6) return err.textContent = "Password must be at least 6 characters."; s.name = name; s.class = cls; s.attendance = att; s.status = status; s.photo = photo; if(u){ u.name = name; u.photo = photo; if(username) u.username = username; if(password) u.password = password; } recalculateEligibility(); audit("Student Updated", `${s.id} - ${s.name}`); closeModal(); toast("Student details updated successfully"); navigate(currentPage); }
+function renderTeachers(){ if(!can("teachers.read")) return showAccessDenied(); $("app").innerHTML = `<div class="card"><div class="card-head"><div><h2>Teachers</h2><p class="muted">Add, remove and manage teaching staff</p></div><button class="btn btn-primary" onclick="openAddUser('teacher')">+ Add Teacher</button></div><div class="table-wrapper"><table><thead><tr><th>Teacher ID</th><th>Name</th><th>Username</th><th>Classes</th><th>Action</th></tr></thead><tbody>${db.teachers.length ? db.teachers.map(tc=>{ const u = db.users.find(x => x.refId === tc.id); return `<tr><td>${esc(tc.id)}</td><td>${esc(tc.name)}</td><td>${esc(u ? u.username : "-")}</td><td>${tc.classes.map(c=>`<span class="badge badge-info">${esc(c)}</span>`).join(" ") || "-"}</td><td><button class="btn btn-secondary btn-sm" onclick="openAssignClasses('${esc(tc.id)}')">Classes</button>${u ? `<button class="btn btn-secondary btn-sm" onclick="openEditUser('${esc(u.id)}')">Login</button>` : ""}<button class="btn btn-danger btn-sm" onclick="deleteTeacher('${esc(tc.id)}')">Delete</button></td></tr>`;}).join("") : `<tr><td colspan="5" class="empty">No teachers yet.</td></tr>`}</tbody></table></div></div>`; }
+function openAssignClasses(teacherId){ if(!can("teachers.create")) return toast("Not authorized"); const tc = db.teachers.find(x => x.id === teacherId); if(!tc) return; const labels = allLabels(); openModal(`<h3>Classes — ${esc(tc.name)}</h3><div class="field"><div class="checks">${labels.length ? labels.map(l=>`<label><input type="checkbox" class="cls_chk" value="${esc(l)}" ${tc.classes.includes(l)?"checked":""}> ${esc(l)}</label>`).join("") : `<span class="muted">No classes yet. Add them on the Classes page.</span>`}</div></div><div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveAssignClasses('${esc(tc.id)}')">Save</button></div>`); }
+function saveAssignClasses(teacherId){ const tc = db.teachers.find(x => x.id === teacherId); if(!tc) return; tc.classes = [...document.querySelectorAll(".cls_chk:checked")].map(c => c.value); audit("Teacher Classes Updated", `${tc.name}: ${tc.classes.join(", ") || "none"}`); closeModal(); toast("Classes updated"); renderTeachers(); }
+const shownPw = new Set();
+function togglePw(id){ shownPw.has(id) ? shownPw.delete(id) : shownPw.add(id); renderUsers(); }
+function renderUsers(){ if(!can("users.read")) return showAccessDenied(); const badge = {admin:"badge-warning", teacher:"badge-info", student:"badge-success"}; $("app").innerHTML = `<div class="card"><div class="card-head"><div><h2>All User Accounts</h2><p class="muted">Manage all system accounts, photos, usernames and passwords.</p></div><button class="btn btn-primary" onclick="openAddUser('student')">+ Add User</button></div><div class="table-wrapper"><table><thead><tr><th>Photo</th><th>Name</th><th>Username</th><th>Password</th><th>Type</th><th>Record ID</th><th>Action</th></tr></thead><tbody>${db.users.map(u=>`<tr><td>${u.photo ? `<img src="${esc(u.photo)}" class="user-avatar" alt="">` : '<span class="muted">–</span>'}</td><td>${esc(u.name)}</td><td>${esc(u.username)}</td><td><span class="mono">${shownPw.has(u.id) ? esc(u.password) : "••••••••"}</span><button class="btn btn-secondary btn-sm" onclick="togglePw('${esc(u.id)}')">${shownPw.has(u.id) ? "Hide" : "Show"}</button></td><td><span class="badge ${badge[u.role]}">${esc(roleLabel(u.role))}</span></td><td>${esc(u.refId || "-")}</td><td><button class="btn btn-secondary btn-sm" onclick="openEditUser('${esc(u.id)}')">Edit profile</button>${u.role==="student" ? `<button class="btn btn-danger btn-sm" onclick="deleteStudent('${esc(u.refId)}')">Delete</button>` : u.role==="teacher" ? `<button class="btn btn-danger btn-sm" onclick="deleteTeacher('${esc(u.refId)}')">Delete</button>` : u.id===currentUser.id ? `<span class="muted">You</span>` : `<button class="btn btn-danger btn-sm" onclick="deleteAdmin('${esc(u.id)}')">Delete</button>`}</td></tr>`).join("")}</tbody></table></div></div>`; }
+function openEditUser(userId){ if(!can("users.edit")) return toast("Not authorized"); const u = db.users.find(x => x.id === userId); if(!u) return; openModal(`<h3>Login details — ${esc(u.name)}</h3><p class="muted" style="margin-bottom:14px">${esc(roleLabel(u.role))} account</p><div class="field"><label for="e_user">Username</label><input id="e_user" value="${esc(u.username)}" autocomplete="off"></div><div class="field"><label for="e_pass">New password (leave blank to keep current)</label><input id="e_pass" type="text" autocomplete="off"></div><div class="field"><label for="e_photo">Profile Photo URL</label><input id="e_photo" value="${esc(u.photo || '')}"></div><div class="error" id="e_err"></div><div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveEditUser('${esc(u.id)}')">Save</button></div>`); }
+function saveEditUser(userId){ if(!can("users.edit")) return; const u = db.users.find(x => x.id === userId); if(!u) return; const user = $("e_user").value.trim(), pass = $("e_pass").value, photo = $("e_photo").value.trim(), err = $("e_err"); if(!user) return err.textContent = "Username is required."; if(usernameTaken(user, u.id)) return err.textContent = "That username is already in use."; if(pass && pass.length < 6) return err.textContent = "Password must be at least 6 characters."; u.username = user; u.photo = photo; if(pass){ u.password = pass; } if(u.refId){ let refObj = db.students.find(s => s.id === u.refId) || db.teachers.find(t => t.id === u.refId); if(refObj) refObj.photo = photo; } audit("Login Details Changed", `${u.name} (${roleLabel(u.role)})`); closeModal(); toast("Login details saved"); navigate(currentPage); }
+function deleteStudent(id){ if(!can("students.delete")) return toast("Not authorized"); const s = db.students.find(x => x.id === id); if(!s) return; if(!confirm(`Delete ${s.name} (${s.id})? Their login and marks will also be removed.`)) return; db.students = db.students.filter(x => x.id !== id); db.users = db.users.filter(u => u.refId !== id); db.marks = db.marks.filter(m => m.studentId !== id); audit("Student Deleted", `${s.name} (${s.id})`); toast("Student deleted"); navigate(currentPage); }
+function deleteTeacher(id){ if(!can("teachers.delete")) return toast("Not authorized"); const tc = db.teachers.find(x => x.id === id); if(!tc) return; if(!confirm(`Delete ${tc.name} (${tc.id})? Their login will also be removed.`)) return; db.teachers = db.teachers.filter(x => x.id !== id); db.users = db.users.filter(u => u.refId !== id); audit("Teacher Deleted", `${tc.name} (${tc.id})`); toast("Teacher deleted"); navigate(currentPage); }
+function deleteAdmin(userId){ if(!can("users.delete")) return toast("Not authorized"); const u = db.users.find(x => x.id === userId); if(!u || u.role !== "admin") return; if(u.id === currentUser.id) return toast("You cannot delete your own account"); if(db.users.filter(x => x.role === "admin").length <= 1) return toast("At least one admin must remain"); if(!confirm(`Delete admin ${u.name}?`)) return; db.users = db.users.filter(x => x.id !== userId); audit("Admin Deleted", u.name); toast("Admin deleted"); navigate(currentPage); }
+function studentsIn(label){ return db.students.filter(s => s.class === label).length; }
+function renderClasses(){ if(!can("classes.manage")) return showAccessDenied(); $("app").innerHTML = `<div class="card"><h2>Add class</h2><p class="muted" style="margin:8px 0 16px">Example: class 10 with division A gives the label 10A.</p><div class="inline-form"><div class="field"><label for="cl_name">Class</label><input id="cl_name" placeholder="10" maxlength="10"></div><div class="field"><label for="cl_div">First division</label><input id="cl_div" value="A" maxlength="10"></div><button class="btn btn-primary" onclick="addClass()">Add class</button></div><div class="error" id="cl_err"></div></div><div class="card mt"><h2>Classes and divisions</h2><p class="muted" style="margin:8px 0 16px">The number beside a division is how many students are enrolled.</p>${db.classes.length ? db.classes.map(c=>`<div class="class-row"><div class="class-row-head"><strong>Class ${esc(c.name)}</strong><button class="btn btn-danger btn-sm" onclick="removeClass('${esc(c.id)}')">Remove class</button></div><div>${c.divisions.length ? c.divisions.map(d=>`<span class="chip">${esc(c.name+d)} <small>${studentsIn(c.name+d)} students</small><button title="Remove division" aria-label="Remove division ${esc(c.name+d)}" onclick="removeDivision('${esc(c.id)}','${esc(d)}')">×</button></span>`).join("") : `<span class="muted">No divisions yet.</span>`}</div><div class="inline-form" style="margin:10px 0 0"><div class="field" style="max-width:160px"><input id="dv_${esc(c.id)}" placeholder="New division" maxlength="10" aria-label="New division for class ${esc(c.name)}"></div><button class="btn btn-secondary btn-sm" onclick="addDivision('${esc(c.id)}')">Add division</button></div></div>`).join("") : `<div class="empty">No classes yet. Add your first class above.</div>`}</div>`; }
+function addClass(){ if(!can("classes.manage")) return; const name = $("cl_name").value.trim(), div = $("cl_div").value.trim(), err = $("cl_err"); if(!/^[\p{L}\p{N}]{1,10}$/u.test(name)) return err.textContent = "Class name: 1–10 letters or numbers, no spaces."; if(div && !/^[\p{L}\p{N}]{1,10}$/u.test(div)) return err.textContent = "Division: 1–10 letters or numbers, no spaces."; if(db.classes.some(c => c.name.toLowerCase() === name.toLowerCase())) return err.textContent = "That class already exists."; db.classes.push({id:nextId("CL", db.classes), name, divisions: div ? [div] : []}); audit("Class Added", `${name}${div ? " / " + div : ""}`); toast("Class added"); renderClasses(); }
+function addDivision(classId){ if(!can("classes.manage")) return; const c = db.classes.find(x => x.id === classId); if(!c) return; const d = $("dv_" + classId).value.trim(); if(!/^[\p{L}\p{N}]{1,10}$/u.test(d)) return toast("Division: 1–10 letters or numbers, no spaces"); if(c.divisions.some(x => x.toLowerCase() === d.toLowerCase())) return toast("That division already exists"); c.divisions.push(d); audit("Division Added", c.name + d); toast("Division added"); renderClasses(); }
+function cleanTeacherClasses(){ const labels = allLabels(); db.teachers.forEach(tc => tc.classes = tc.classes.filter(l => labels.includes(l))); }
+function removeDivision(classId, d){ if(!can("classes.manage")) return; const c = db.classes.find(x => x.id === classId); if(!c) return; const label = c.name + d, n = studentsIn(label); if(n) return toast(`${label} still has ${n} student${n===1?"":"s"}. Remove or move them first.`); if(!confirm(`Remove division ${label}?`)) return; c.divisions = c.divisions.filter(x => x !== d); cleanTeacherClasses(); audit("Division Removed", label); toast("Division removed"); renderClasses(); }
+function removeClass(classId){ if(!can("classes.manage")) return; const c = db.classes.find(x => x.id === classId); if(!c) return; const n = c.divisions.reduce((a,d) => a + studentsIn(c.name + d), 0); if(n) return toast(`Class ${c.name} still has ${n} student${n===1?"":"s"}. Remove or move them first.`); if(!confirm(`Remove class ${c.name} and all its divisions?`)) return; db.classes = db.classes.filter(x => x.id !== classId); cleanTeacherClasses(); audit("Class Removed", c.name); toast("Class removed"); renderClasses(); }
+function typeBadge(type){ return type === "SYLLABUS" ? `<span class="badge badge-info">Syllabus</span>` : `<span class="badge badge-warning">Non-syllabus</span>`; }
+function renderExams(){ if(!can("exams.manage")) return showAccessDenied(); $("app").innerHTML = `<div class="split"><div class="card"><h2>Exams</h2><p class="muted" style="margin:8px 0 16px">Add the exams that teachers will enter marks for.</p><div class="inline-form"><div class="field"><label for="ex_name">Exam name</label><input id="ex_name" placeholder="e.g. Quarterly"></div><button class="btn btn-primary" onclick="addExam()">Add exam</button></div><div class="table-wrapper"><table><thead><tr><th>Exam</th><th>Action</th></tr></thead><tbody>${db.exams.length ? db.exams.map(e=>`<tr><td>${esc(e.name)}</td><td><button class="btn btn-danger btn-sm" onclick="deleteExam('${esc(e.id)}')">Delete</button></td></tr>`).join("") : `<tr><td colspan="2" class="empty">No exams yet.</td></tr>`}</tbody></table></div></div><div class="card"><h2>Subjects</h2><p class="muted" style="margin:8px 0 16px">Syllabus subjects count toward total, average, percentage, grade and rank. Non-syllabus subjects are shown separately.</p><div class="inline-form"><div class="field"><label for="sub_name">Subject</label><input id="sub_name" placeholder="e.g. Tajweed"></div><div class="field"><label for="sub_type">Type</label><select id="sub_type"><option value="SYLLABUS">Syllabus</option><option value="NON_SYLLABUS">Non-syllabus</option></select></div><div class="field" style="max-width:100px"><label for="sub_max">Max marks</label><input id="sub_max" type="number" min="1" value="100"></div><button class="btn btn-primary" onclick="addSubject()">Add</button></div><div class="table-wrapper"><table><thead><tr><th>Subject</th><th>Type</th><th>Max</th><th>Action</th></tr></thead><tbody>${db.subjects.length ? db.subjects.map(s=>`<tr><td>${esc(s.name)}</td><td>${typeBadge(s.type)}</td><td>${s.max}</td><td><button class="btn btn-danger btn-sm" onclick="deleteSubject('${esc(s.id)}')">Delete</button></td></tr>`).join("") : `<tr><td colspan="4" class="empty">No subjects yet.</td></tr>`}</tbody></table></div></div></div><div class="error" id="ex_err" style="margin-top:12px"></div>`; }
+function addExam(){ if(!can("exams.manage")) return; const name = $("ex_name").value.trim(); if(!name) return $("ex_err").textContent = "Enter an exam name."; if(db.exams.some(e => e.name.toLowerCase() === name.toLowerCase())) return $("ex_err").textContent = "That exam already exists."; db.exams.push({id:nextId("EX", db.exams), name}); audit("Exam Added", name); toast("Exam added"); renderExams(); }
+function deleteExam(id){ if(!can("exams.manage")) return; const e = db.exams.find(x => x.id === id); if(!e) return; if(!confirm(`Delete exam "${e.name}"? All marks entered for it will be removed.`)) return; db.exams = db.exams.filter(x => x.id !== id); db.marks = db.marks.filter(m => m.examId !== id); audit("Exam Deleted", e.name); toast("Exam deleted"); renderExams(); }
+function addSubject(){ if(!can("exams.manage")) return; const name = $("sub_name").value.trim(), type = $("sub_type").value, max = Number($("sub_max").value); if(!name) return $("ex_err").textContent = "Enter a subject name."; if(!max || max <= 0) return $("ex_err").textContent = "Enter a valid maximum mark."; if(db.subjects.some(s => s.name.toLowerCase() === name.toLowerCase())) return $("ex_err").textContent = "That subject already exists."; db.subjects.push({id:nextId("SUB", db.subjects), name, type, max}); audit("Subject Added", `${name} (${type === "SYLLABUS" ? "Syllabus" : "Non-syllabus"}, max ${max})`); toast("Subject added"); renderExams(); }
+function deleteSubject(id){ if(!can("exams.manage")) return; const s = db.subjects.find(x => x.id === id); if(!s) return; if(!confirm(`Delete subject "${s.name}"? All marks entered for it will be removed.`)) return; db.subjects = db.subjects.filter(x => x.id !== id); db.marks = db.marks.filter(m => m.subjectId !== id); audit("Subject Deleted", s.name); toast("Subject deleted"); renderExams(); }
+function getTodayISO(){ return new Date().toISOString().slice(0,10); }
+function calendarEntry(date){ return db.settings.schoolCalendar[date] || {type:"WORKING", reason:""}; }
+function isWorkingDay(date){ return calendarEntry(date).type === "WORKING"; }
+function attendanceFor(studentId, date){ return db.attendanceLog.find(x => x.studentId===studentId && x.date===date); }
+function attendanceStats(studentId){ const rows = db.attendanceLog.filter(x=>x.studentId===studentId && isWorkingDay(x.date)); const total = rows.length, present = rows.filter(x=>x.status==="PRESENT" || x.status==="LATE").length; return {total,present,absent:rows.filter(x=>x.status==="ABSENT").length,pct:total ? Math.round(present/total*1000)/10 : 0}; }
+function syncAttendancePercentages(){ db.students.forEach(s=>{ const st = attendanceStats(s.id); if(st.total) s.attendance = st.pct; }); recalculateEligibility(); }
+function markAllForDay(status){ if(!can("attendance.update")) return; const date = $("att_date").value || getTodayISO(); if(!isWorkingDay(date)) return toast("Select a working day first."); visibleStudents().forEach(s=>{ const existing = attendanceFor(s.id,date); if(existing) existing.status = status; else db.attendanceLog.push({id:"AT-"+Date.now()+"-"+Math.random().toString(36).slice(2,7),studentId:s.id,date,status,note:""}); }); syncAttendancePercentages(); saveDb(); renderAttendance(); toast(`${status==="PRESENT"?"Present":"Absent"} marked for all visible students`); }
+function saveDayAttendance(){ if(!can("attendance.update")) return toast("Not authorized"); const date = $("att_date").value || getTodayISO(); if(!isWorkingDay(date)) return toast("This is a non-working day."); const allowed = new Set(visibleStudents().map(s=>s.id)); document.querySelectorAll("[data-day-att]").forEach(sel=>{ if(!allowed.has(sel.dataset.dayAtt)) return; const status = sel.value; const existing = attendanceFor(sel.dataset.dayAtt,date); if(existing) existing.status = status; else db.attendanceLog.push({id:"AT-"+Date.now()+"-"+Math.random().toString(36).slice(2,7),studentId:sel.dataset.dayAtt,date,status,note:""}); }); syncAttendancePercentages(); saveDb(); renderAttendance(); toast("Daily attendance saved"); }
+function renderAttendance(){ if(!can("attendance.read")) return showAccessDenied(); syncAttendancePercentages(); const list = visibleStudents(); const date = $("att_date")?.value || getTodayISO(); const cal = calendarEntry(date); $("app").innerHTML = `<div class="card"><div class="card-head"><div><h2>Daily Attendance</h2><p class="muted">Mark attendance day by day. Working/non-working days are controlled by the administrator.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-secondary" onclick="markAllForDay('PRESENT')">✓ All Present</button><button class="btn btn-secondary" onclick="markAllForDay('ABSENT')">All Absent</button><button class="btn btn-primary" onclick="saveDayAttendance()">Save Day</button></div></div><div class="inline-form"><div class="field" style="max-width:210px"><label for="att_date">Attendance date</label><input id="att_date" type="date" value="${esc(date)}" onchange="renderAttendance()"></div><div style="padding-bottom:14px"><span class="badge ${cal.type==="WORKING"?"calendar-working":"calendar-off"}">${cal.type==="WORKING"?"WORKING DAY":"NON-WORKING DAY"}</span>${cal.reason ? `<span class="muted" style="margin-left:8px">${esc(cal.reason)}</span>` : ""}</div></div>${cal.type!="WORKING" ? `<div class="notice" style="padding:14px;background:#fff1f2;border-radius:10px;margin-bottom:15px"><strong>Attendance is locked for this date.</strong><span class="muted">The administrator has marked it as a non-working day.</span></div>` : ""}<div class="table-wrapper"><table><thead><tr><th>Student</th><th>Class</th><th>Today's Status</th><th>Attendance %</th><th>Working Days</th></tr></thead><tbody>${list.length ? list.map(s=>{ const row=attendanceFor(s.id,date), st=attendanceStats(s.id); return `<tr><td><strong>${esc(s.name)}</strong><br><span class="mono">${esc(s.id)}</span></td><td>${esc(s.class)}</td><td><select data-day-att="${esc(s.id)}" ${cal.type!="WORKING"?"disabled":""}>${["PRESENT","ABSENT","LATE"].map(v=>`<option value="${v}" ${(row?.status||"PRESENT")===v?"selected":""}>${v.charAt(0)+v.slice(1).toLowerCase()}</option>`).join("")}</select></td><td>${st.pct}%</td><td>${st.total}</td></tr>`;}).join("") : `<tr><td colspan="5" class="empty">No students.</td></tr>`}</tbody></table></div></div>`; }
+function renderCalendar(){ if(currentUser.role !== "admin") return showAccessDenied(); const entries = Object.entries(db.settings.schoolCalendar).sort((a,b)=>a[0].localeCompare(b[0])); $("app").innerHTML = `<div class="split"><div class="card"><h2>School Calendar</h2><p class="muted" style="margin:8px 0 18px">Administrators can define each date as a working day or a non-working day.</p><div class="field"><label for="cal_date">Date</label><input id="cal_date" type="date" value="${getTodayISO()}"></div><div class="field"><label for="cal_type">Day type</label><select id="cal_type"><option value="WORKING">Working day</option><option value="NON_WORKING">Non-working day</option></select></div><div class="field"><label for="cal_reason">Reason / note</label><input id="cal_reason" placeholder="Friday holiday, public holiday..."></div><div class="error" id="cal_err"></div><button class="btn btn-primary btn-block" onclick="saveCalendarDay()">Save day status</button></div><div class="card"><div class="card-head"><div><h2>Marked dates</h2><p class="muted">Dates you have specifically configured.</p></div></div><div class="table-wrapper"><table><thead><tr><th>Date</th><th>Status</th><th>Reason</th><th>Action</th></tr></thead><tbody>${entries.length ? entries.map(([date,e])=>`<tr><td>${esc(date)}</td><td><span class="badge ${e.type==="WORKING"?"calendar-working":"calendar-off"}">${e.type==="WORKING"?"Working":"Non-working"}</span></td><td>${esc(e.reason||"—")}</td><td><button class="btn btn-danger btn-sm" onclick="removeCalendarDay('${esc(date)}')">Remove</button></td></tr>`).join("") : `<tr><td colspan="4" class="empty">No custom dates yet.</td></tr>`}</tbody></table></div></div></div>`; }
+function saveCalendarDay(){ if(currentUser.role !== "admin") return toast("Not authorized"); const date=$("cal_date").value, type=$("cal_type").value, reason=$("cal_reason").value.trim(); if(!date) return $("cal_err").textContent="Select a date."; db.settings.schoolCalendar[date]={type,reason}; audit("School Calendar Updated", `${date}: ${type}`); saveDb(); toast("School calendar updated"); renderCalendar(); }
+function removeCalendarDay(date){ if(currentUser.role !== "admin") return; delete db.settings.schoolCalendar[date]; audit("School Calendar Reset", date); saveDb(); toast("Date reset"); renderCalendar(); }
+let marksFilter = {examId:"", subjectId:"", cls:""};
+function renderMarks(){ if(!can("marks.update")) return showAccessDenied(); const classes = visibleClasses(); if(!db.exams.some(e => e.id === marksFilter.examId)) marksFilter.examId = db.exams[0] ? db.exams[0].id : ""; if(!db.subjects.some(s => s.id === marksFilter.subjectId)) marksFilter.subjectId = db.subjects[0] ? db.subjects[0].id : ""; if(!classes.includes(marksFilter.cls)) marksFilter.cls = classes[0] || ""; if(!db.exams.length || !db.subjects.length){ $("app").innerHTML = `<div class="card empty">Add at least one exam and one subject first.</div>`; return; } const subject = db.subjects.find(s => s.id === marksFilter.subjectId); $("app").innerHTML = `<div class="card"><div class="card-head"><div><h2>Enter exam marks</h2><p class="muted">Choose exam, subject and class, then enter marks for each student.</p></div></div><div class="row"><div class="field"><label>Exam</label><select onchange="marksFilter.examId=this.value;renderMarks()">${db.exams.map(e=>`<option value="${esc(e.id)}" ${e.id===marksFilter.examId?"selected":""}>${esc(e.name)}</option>`).join("")}</select></div><div class="field"><label>Subject</label><select onchange="marksFilter.subjectId=this.value;renderMarks()">${db.subjects.map(s=>`<option value="${esc(s.id)}" ${s.id===marksFilter.subjectId?"selected":""}>${esc(s.name)} (${s.type==="SYLLABUS"?"Syllabus":"Non-syllabus"})</option>`).join("")}</select></div><div class="field"><label>Class</label><select onchange="marksFilter.cls=this.value;renderMarks()">${classes.length ? classes.map(c=>`<option ${c===marksFilter.cls?"selected":""}>${esc(c)}</option>`).join("") : "<option value=''>No classes assigned</option>"}</select></div></div><p class="muted" style="margin-bottom:12px">Maximum marks for ${esc(subject.name)}: <strong>${subject.max}</strong></p><div id="marksTable"></div></div>`; renderMarksTable(subject); }
+function renderMarksTable(subject){ const students = visibleStudents().filter(s => s.class === marksFilter.cls); $("marksTable").innerHTML = `<div class="table-wrapper"><table><thead><tr><th>Student ID</th><th>Name</th><th>Marks (out of ${subject.max})</th></tr></thead><tbody>${students.length ? students.map(s=>{ const m = findMark(s.id, marksFilter.examId, subject.id); return `<tr><td>${esc(s.id)}</td><td>${esc(s.name)}</td><td><input type="number" min="0" max="${subject.max}" step="0.5" data-mark="${esc(s.id)}" value="${m ? m.score : ""}"></td></tr>`; }).join("") : `<tr><td colspan="3" class="empty">No students in this class.</td></tr>`}</tbody></table></div>${students.length ? `<div style="margin-top:16px;text-align:end"><button class="btn btn-primary" onclick="saveMarks()">Save marks</button></div>` : ""}`; }
+function saveMarks(){ if(!can("marks.update")) return toast("Not authorized"); const subject = db.subjects.find(s => s.id === marksFilter.subjectId); const exam = db.exams.find(e => e.id === marksFilter.examId); if(!subject || !exam) return; const allowed = new Set(visibleStudents().map(s => s.id)); const inputs = [...document.querySelectorAll("[data-mark]")]; for(const inp of inputs){ if(inp.value === "") continue; const v = Number(inp.value); if(isNaN(v) || v < 0 || v > subject.max) return toast(`Marks must be between 0 and ${subject.max}`); } let saved = 0; inputs.forEach(inp=>{ if(inp.value === "" || !allowed.has(inp.dataset.mark)) return; const sid = inp.dataset.mark, score = Number(inp.value); const existing = findMark(sid, exam.id, subject.id); if(existing){ Object.assign(existing, {score, max:subject.max, by:currentUser.name, date:new Date().toLocaleString()}); } else db.marks.push({studentId:sid, examId:exam.id, subjectId:subject.id, score, max:subject.max, by:currentUser.name, date:new Date().toLocaleString()}); saved++; }); audit("Marks Entered", `${exam.name} · ${subject.name} · class ${marksFilter.cls}`); saveDb(); toast(`Marks saved for ${saved} student${saved===1?"":"s"}`); }
+function barColor(v){ return v >= 80 ? "#15803d" : v >= 60 ? "#0b4f8a" : v >= 40 ? "#b45309" : "#dc2626"; }
+function barChart(items, label){ const W = 560, H = 250, pl = 36, pr = 10, pt = 22, pb = 46; const iw = W - pl - pr, ih = H - pt - pb, n = items.length, slot = iw / n, bw = Math.min(54, slot * .6); const y = v => pt + ih - (v / 100) * ih; let g = ""; [0,25,50,75,100].forEach(v=>{ g += `<line x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}" stroke="#e2e8f0"/><text x="${pl-6}" y="${y(v)+4}" font-size="10" text-anchor="end" fill="#6b7280">${v}</text>`; }); const bars = items.map((it,i)=>{ const x = pl + slot * i + (slot - bw) / 2, h = (it.value / 100) * ih; const name = it.label.length > 11 ? it.label.slice(0,10) + "…" : it.label; return `<rect x="${x}" y="${y(it.value)}" width="${bw}" height="${h}" rx="4" fill="${barColor(it.value)}"/><text x="${x+bw/2}" y="${y(it.value)-5}" font-size="11" font-weight="600" text-anchor="middle" fill="#172033">${esc(it.text)}</text><text x="${x+bw/2}" y="${H-pb+16}" font-size="11" text-anchor="middle" fill="#6b7280">${esc(name)}</text>`; }).join(""); return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(label)}" style="width:100%;height:auto;max-width:640px">${g}${bars}</svg>`; }
+let resultExamId = ""; let resultClass = "";
+function gradeScaleNote(){ return `<p class="note">Grades: A+ 90–100 · A 80–89 · B+ 70–79 · B 60–69 · C 50–59 · D 40–49 · F below 40.</p>`; }
+function examSelect(){ return `<div class="field" style="margin:0;min-width:160px"><label>Exam</label><select onchange="resultExamId=this.value;renderResults()">${db.exams.map(e=>`<option value="${esc(e.id)}" ${e.id===resultExamId?"selected":""}>${esc(e.name)}</option>`).join("")}</select></div>`; }
+function renderResults(){ if(!db.exams.some(e => e.id === resultExamId)) resultExamId = db.exams[0] ? db.exams[0].id : ""; if(!db.exams.length){ $("app").innerHTML = `<div class="card empty">No exams created yet.</div>`; return; } return currentUser.role === "student" ? renderStudentResult() : renderStaffResults(); }
+function renderStudentResult(){ const s = db.students.find(x => x.id === currentUser.refId); if(!s){ $("app").innerHTML = `<div class="card empty">Your student record was not found.</div>`; return; } const c = calcStudent(s.id, resultExamId), r = rankOf(s, resultExamId); const syl = db.subjects.filter(x => x.type === "SYLLABUS"); const rows = list => list.map(sub=>{ const m = findMark(s.id, resultExamId, sub.id), p = m ? m.score / m.max * 100 : null; return `<tr><td>${esc(sub.name)}</td><td>${m ? m.score : "–"}</td><td>${sub.max}</td><td>${gradeBadge(gradeOf(p))}</td></tr>`; }).join(""); const subjItems = db.subjects.map(sub=>{ const m = findMark(s.id, resultExamId, sub.id); return m ? {label:sub.name, value:m.score / m.max * 100, text:fmt(m.score / m.max * 100) + "%"} : null; }).filter(Boolean); $("app").innerHTML = `<div class="card"><div class="card-head"><div style="display:flex;align-items:center;gap:16px;">${s.photo ? `<img src="${esc(s.photo)}" class="user-avatar-lg" alt="">` : ''}<div><h2>My Result</h2><p class="muted">${esc(s.name)} · Class ${esc(s.class)}</p></div></div><div class="head-actions">${examSelect()}<button class="btn btn-primary" onclick="printStudentList('${esc(s.id)}','${esc(resultExamId)}')" ${subjItems.length ? "" : "disabled"}>📄 Download Mark List (PDF)</button></div></div>${c.count ? `<div class="grid"><div class="card"><div class="stat-label">Rank</div><div class="stat-number">${r.rank}<span class="muted" style="font-size:14px;font-weight:500"> of ${r.of}</span></div></div><div class="card"><div class="stat-label">Average</div><div class="stat-number">${fmt(c.avg)}</div></div><div class="card"><div class="stat-label">Percentage</div><div class="stat-number">${fmt(c.pct)}%</div></div><div class="card"><div class="stat-label">Grade</div><div class="stat-number">${gradeBadge(c.grade)}</div></div></div><p class="muted" style="margin-top:14px">Total: <strong>${fmt(c.total)} /${c.max}</strong></p>` : `<div class="empty">No marks entered for this exam yet.</div>`}</div>${subjItems.length ? `<div class="split mt"><div class="card chart-card"><h3>Subject marks (%)</h3>${barChart(subjItems, "Subject marks percentage")}</div></div>` : ""}<div class="card mt"><h2>Syllabus subjects</h2><div class="table-wrapper" style="margin-top:12px"><table><thead><tr><th>Subject</th><th>Marks</th><th>Maximum</th><th>Grade</th></tr></thead><tbody>${syl.length ? rows(syl) : `<tr><td colspan="4" class="empty">No syllabus subjects.</td></tr>`}</tbody></table></div></div>${gradeScaleNote()}`; }
+function classRows(cls, examId){ return db.students.filter(s => s.class === cls).map(s=>{ const c = calcStudent(s.id, examId), r = rankOf(s, examId); return {s, c, rank:r.rank}; }).sort((a,b) => (a.rank ?? 1e9) - (b.rank ?? 1e9) || a.s.name.localeCompare(b.s.name)); }
+function renderStaffResults(){ const classes = visibleClasses(); if(!classes.includes(resultClass)) resultClass = classes[0] || ""; const syl = db.subjects.filter(x => x.type === "SYLLABUS"); const rows = classRows(resultClass, resultExamId); const cell = (sid, sub) => { const m = findMark(sid, resultExamId, sub.id); return `<td>${m ? m.score : "–"}</td>`; }; $("app").innerHTML = `<div class="card"><div class="card-head"><div><h2>Results</h2><p class="muted">Ranked list for the selected exam and class</p></div><div class="head-actions">${examSelect()}<div class="field" style="margin:0;min-width:120px"><label>Class</label><select onchange="resultClass=this.value;renderResults()">${classes.length ? classes.map(c=>`<option ${c===resultClass?"selected":""}>${esc(c)}</option>`).join("") : "<option value=''>No classes</option>"}</select></div><button class="btn btn-primary" onclick="printClassList('${esc(resultClass)}','${esc(resultExamId)}')" ${rows.length ? "" : "disabled"}>📄 Download Mark List (PDF)</button></div></div><div class="table-wrapper"><table><thead><tr><th>Rank</th><th>Student</th>${syl.map(x=>`<th>${esc(x.name)}</th>`).join("")}<th>Total</th><th>Average</th><th>%</th><th>Grade</th></tr></thead><tbody>${rows.length ? rows.map(({s,c,rank})=>`<tr><td><strong>${rank ?? "–"}</strong></td><td>${esc(s.name)}</td>${syl.map(x=>cell(s.id,x)).join("")}<td>${c.count ? fmt(c.total)+"/"+c.max : "–"}</td><td>${fmt(c.avg)}</td><td>${c.pct===null ? "–" : fmt(c.pct)+"%"}</td><td>${gradeBadge(c.grade)}</td></tr>`).join("") : `<tr><td colspan="${syl.length+6}" class="empty">No students in this class.</td></tr>`}</tbody></table></div>${gradeScaleNote()}</div>`; }
+function doPrint(title, html){ const prev = document.title; document.title = title; $("printArea").innerHTML = `<div class="pd">${html}</div>`; window.addEventListener("afterprint", ()=>{ document.title = prev; $("printArea").innerHTML = ""; }, {once:true}); toast("In the print preview window, choose 'Save as PDF'"); setTimeout(()=>window.print(), 150); }
+function printStudentList(studentId, examId){ const s = db.students.find(x => x.id === studentId), exam = db.exams.find(e => e.id === examId); if(!s || !exam) return; if(currentUser.role === "student" && currentUser.refId !== studentId) return toast("Not authorized"); const c = calcStudent(s.id, exam.id), r = rankOf(s, exam.id); const rows = type => db.subjects.filter(x => x.type === type).map(sub=>{ const m = findMark(s.id, exam.id, sub.id), p = m ? m.score / m.max * 100 : null; return `<tr><td>${esc(sub.name)}</td><td>${m ? m.score : "–"}</td><td>${sub.max}</td><td>${gradeOf(p)}</td></tr>`; }).join(""); const head = `<thead><tr><th>Subject</th><th>Marks Obtained</th><th>Max Marks</th><th>Grade</th></tr></thead>`; const hasNon = db.subjects.some(x => x.type === "NON_SYLLABUS"); doPrint(`Qurthba-MarkList-${s.name}-${exam.name}`.replace(/\s+/g,"_"), `<div class="pd-header"><div class="pd-logo"><div class="pd-logo-icon">🏛️</div><div><h1>${esc(SCHOOL.name)}</h1><div class="institution-subtitle">Islamic Educational Institution</div></div></div><div style="text-align:right; font-size:12px; color:#6b7280;"><div>Phone: ${esc(SCHOOL.phone)}</div><div>Email: ${esc(SCHOOL.email)}</div></div></div><h2 style="margin-top:0; border:0; font-size:20px; text-align:center;">OFFICIAL EXAM RESULT REPORT</h2><div class="meta-box"><div><strong>Student Name:</strong> ${esc(s.name)}</div><div><strong>Exam:</strong> ${esc(exam.name)}</div><div><strong>Student ID:</strong> ${esc(s.id)}</div><div><strong>Academic Year:</strong> ${esc(db.settings.academicYear)}</div><div><strong>Class:</strong> ${esc(s.class)}</div><div><strong>Date Generated:</strong> ${esc(new Date().toLocaleDateString())}</div></div><h2>Syllabus Subjects Performance</h2><table>${head}<tbody>${rows("SYLLABUS")}</tbody></table><div class="sum"><div><strong>Total Marks:</strong> ${c.count ? fmt(c.total) + " / " + c.max : "–"}</div><div><strong>Percentage:</strong> ${c.pct === null ? "–" : fmt(c.pct) + "%"}</div><div><strong>Overall Grade:</strong> ${c.grade}</div><div><strong>Class Rank:</strong> ${r.rank ? r.rank + " of " + r.of : "–"}</div><div><strong>Class Average:</strong> ${fmt(c.avg)}</div></div>${hasNon ? `<h2>Non-Syllabus Activities</h2><table>${head}<tbody>${rows("NON_SYLLABUS")}</tbody></table>` : ""}<div class="foot"><strong>Qurthba Islamic Educational Institution</strong> — Knowledge. Character. Excellence.<br>This is a computer-generated official grade report.</div>`); }
+function printClassList(cls, examId){ const exam = db.exams.find(e => e.id === examId); if(!exam || !cls) return; if(!visibleClasses().includes(cls)) return toast("Not authorized"); const syl = db.subjects.filter(x => x.type === "SYLLABUS"); const rows = classRows(cls, examId); const cell = (sid, sub) => { const m = findMark(sid, examId, sub.id); return `<td>${m ? m.score : "–"}</td>`; }; doPrint(`Qurthba-ClassList-${cls}-${exam.name}`.replace(/\s+/g,"_"), `<div class="pd-header"><div class="pd-logo"><div class="pd-logo-icon">🏛️</div><div><h1>${esc(SCHOOL.name)}</h1><div class="institution-subtitle">Islamic Educational Institution</div></div></div><div style="text-align:right; font-size:12px; color:#6b7280;"><div>Class: ${esc(cls)}</div><div>Exam: ${esc(exam.name)}</div></div></div><h2 style="margin-top:0; border:0; font-size:20px; text-align:center;">CLASS PERFORMANCE RANK LIST</h2><div style="font-size:12px; margin-bottom:14px; color:#6b7280;">Academic Year: ${esc(db.settings.academicYear)}</div><table><thead><tr><th>Rank</th><th>Student Name</th>${syl.map(x=>`<th>${esc(x.name)}<br>(${x.max})</th>`).join("")}<th>Total</th><th>Avg</th><th>%</th><th>Grade</th></tr></thead><tbody>${rows.map(({s,c,rank})=>`<tr><td><strong>${rank ?? "–"}</strong></td><td>${esc(s.name)}</td>${syl.map(x=>cell(s.id,x)).join("")}<td>${c.count ? fmt(c.total)+"/"+c.max : "–"}</td><td>${fmt(c.avg)}</td><td>${c.pct===null ? "–" : fmt(c.pct)+"%"}</td><td><strong>${c.grade}</strong></td></tr>`).join("")}</tbody></table><div class="foot"><strong>Qurthba Islamic Educational Institution</strong> — Knowledge. Character. Excellence.<br>Generated on ${esc(new Date().toLocaleString())}</div>`); }
+function renderEligibility(){ const isAdmin = currentUser.role === "admin"; const list = visibleStudents(); $("app").innerHTML = `<div class="card"><h2>Eligibility</h2><p class="muted" style="margin:8px 0 20px">Minimum attendance requirement: <strong>${db.settings.attendanceRequirement}%</strong></p><div class="table-wrapper"><table><thead><tr><th>Student</th><th>ID</th><th>Class</th><th>Attendance</th><th>Requirement</th><th>Status</th>${isAdmin?"<th>Action</th>":""}</tr></thead><tbody>${list.map(s=>`<tr><td>${esc(s.name)}</td><td>${esc(s.id)}</td><td>${esc(s.class)}</td><td>${s.attendance}%</td><td>${db.settings.attendanceRequirement}%</td><td><span class="badge ${s.eligibility==="ELIGIBLE"?"badge-success":"badge-danger"}">${esc(s.eligibility.replace("_"," "))}</span>${s.override ? `<span class="badge badge-warning">Overridden</span>` : ""}</td>${isAdmin ? `<td>${s.override ? `<button class="btn btn-secondary btn-sm" onclick="revokeOverride('${esc(s.id)}')">Revoke</button>` : s.eligibility==="NOT_ELIGIBLE" ? `<button class="btn btn-primary btn-sm" onclick="overrideEligibility('${esc(s.id)}')">Override</button>` : "-"}</td>` : ""}</tr>`).join("")}</tbody></table></div></div>`; }
+function overrideEligibility(id){ if(!can("eligibility.override")) return alert("Not authorized."); const s = db.students.find(x => x.id === id); if(!s) return; const reason = prompt(`Override eligibility for ${s.name}.\n\nEnter reason:`); if(!reason || !reason.trim()) return alert("Reason required."); s.eligibility = "ELIGIBLE"; s.override = true; audit("Eligibility Override", `${s.name} (${s.id})`); toast("Override recorded"); renderEligibility(); }
+function revokeOverride(id){ if(!can("eligibility.override")) return; const s = db.students.find(x => x.id === id); if(!s) return; s.override = false; recalculateEligibility(); audit("Eligibility Override Revoked", `${s.name} (${s.id})`); renderEligibility(); }
+function newRoomLink(){ const a = new Uint8Array(6); crypto.getRandomValues(a); return "https://meet.jit.si/Qurthba-" + [...a].map(b => b.toString(36).padStart(2,"0")).join(""); }
+function localNow(){ const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0,16); }
+function visibleMeetings(){ let list = db.meetings; if(currentUser.role === "teacher"){ const cls = visibleClasses(); list = list.filter(m => m.cls === "ALL" || cls.includes(m.cls) || m.createdById === currentUser.id); } else if(currentUser.role === "student"){ const own = visibleClasses(); list = list.filter(m => m.cls === "ALL" || own.includes(m.cls)); } return [...list].sort((a,b) => new Date(a.when) - new Date(b.when)); }
+function renderMeetings(){ const host = can("meetings.manage"); const list = visibleMeetings(); const audience = currentUser.role === "admin" ? [["ALL","Everyone"], ...allLabels().map(l => [l, "Class " + l])] : visibleClasses().map(l => [l, "Class " + l]); $("app").innerHTML = `${host ? `<div class="card"><h2>Schedule a live meeting</h2><p class="muted" style="margin:8px 0 16px">Meetings open on Jitsi Meet by default.</p><div class="form-grid"><div class="field"><label for="mt_title">Title *</label><input id="mt_title" placeholder="e.g. Hadith class"></div><div class="field"><label for="mt_when">Date and time *</label><input id="mt_when" type="datetime-local" value="${localNow()}"></div><div class="field"><label for="mt_cls">Who can see it</label><select id="mt_cls">${audience.length ? audience.map(([v,l])=>`<option value="${esc(v)}">${esc(l)}</option>`).join("") : `<option value="">No classes assigned</option>`}</select></div><div class="field"><label for="mt_link">Meeting link</label><input id="mt_link" value="${esc(newRoomLink())}"></div></div><div class="error" id="mt_err"></div><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn-primary" onclick="scheduleMeeting(false)">Schedule meeting</button><button class="btn btn-secondary" onclick="scheduleMeeting(true)">Start now</button></div></div>` : ""}<div class="card ${host ? "mt" : ""}"><div class="card-head"><div><h2>${host ? "Meetings" : "Live classes"}</h2><p class="muted">Join your scheduled meetings here.</p></div></div>${list.length ? list.map(m=>{ const past = new Date(m.when).getTime() < Date.now() - 2*3600*1000; const canDel = currentUser.role === "admin" || m.createdById === currentUser.id; return `<div class="complaint"><div class="complaint-head"><div><strong>${esc(m.title)}</strong><br><span class="muted" style="font-size:12px">${esc(new Date(m.when).toLocaleString())} ·${m.cls==="ALL" ? "Everyone" : "Class " + esc(m.cls)} · Host: ${esc(m.createdBy)}</span></div>${past ? `<span class="badge badge-info">Past</span>` : `<span class="badge badge-success">Upcoming</span>`}</div><div class="complaint-actions"><a class="btn btn-primary btn-sm" href="${esc(m.link)}" target="_blank" rel="noopener noreferrer">Join meeting</a>${canDel ? `<button class="btn btn-danger btn-sm" onclick="deleteMeeting('${esc(m.id)}')">Delete</button>` : ""}</div></div>`; }).join("") : `<div class="empty">No meetings scheduled.</div>`}</div>`; }
+function scheduleMeeting(startNow){ if(!can("meetings.manage")) return; const title = $("mt_title").value.trim(), when = startNow ? localNow() : $("mt_when").value; const cls = $("mt_cls").value, link = $("mt_link").value.trim(), err = $("mt_err"); if(!title) return err.textContent = "Enter a title."; if(!when) return err.textContent = "Choose a date and time."; if(!cls) return err.textContent = "No classes assigned."; if(!/^https:\/\/[^\s]+$/i.test(link)) return err.textContent = "Link must start with https://"; db.meetings.push({id:nextId("MT", db.meetings), title, when, cls, link, createdBy:currentUser.name, createdById:currentUser.id}); audit("Meeting Scheduled", title); saveDb(); if(startNow) window.open(link, "_blank", "noopener,noreferrer"); toast(startNow ? "Meeting started" : "Meeting scheduled"); renderMeetings(); }
+function deleteMeeting(id){ const m = db.meetings.find(x => x.id === id); if(!m) return; if(!(currentUser.role === "admin" || m.createdById === currentUser.id)) return toast("Not authorized"); if(!confirm(`Delete meeting "${m.title}"?`)) return; db.meetings = db.meetings.filter(x => x.id !== id); audit("Meeting Deleted", m.title); toast("Meeting deleted"); renderMeetings(); }
+function statusBadge(st){ return st === "OPEN" ? `<span class="badge badge-warning">Open</span>` : `<span class="badge badge-success">Resolved</span>`; }
+function renderComplaints(){ if(can("complaints.manage")) return renderComplaintsAdmin(); if(!can("complaints.file")) return showAccessDenied(); const mine = db.complaints.filter(c => c.userId === currentUser.id); $("app").innerHTML = `<div class="card"><h2>File a complaint</h2><p class="muted" style="margin:8px 0 16px">Your complaint goes to the admin, who can reply here.</p><div class="field"><label for="c_sub">Subject</label><input id="c_sub" maxlength="120"></div><div class="field"><label for="c_msg">Details</label><textarea id="c_msg"></textarea></div><div class="error" id="c_err"></div><button class="btn btn-primary" onclick="fileComplaint()">Send to admin</button></div><div class="card mt"><h2>My complaints</h2><div style="margin-top:14px">${mine.length ? mine.map(c=>`<div class="complaint"><div class="complaint-head"><strong>${esc(c.subject)}</strong>${statusBadge(c.status)}</div><p class="muted" style="font-size:12px">${esc(c.date)}</p><p>${esc(c.message)}</p>${c.reply ? `<div class="reply"><strong>Reply from ${esc(c.repliedBy)}:</strong><br>${esc(c.reply)}</div>` : ""}</div>`).join("") : `<div class="empty">You have not filed any complaints.</div>`}</div></div>`; }
+function fileComplaint(){ if(!can("complaints.file")) return; const subject = $("c_sub").value.trim(), message = $("c_msg").value.trim(); if(!subject || !message) return $("c_err").textContent = "Enter a subject and details."; db.complaints.unshift({ id:nextId("CMP", db.complaints), userId:currentUser.id, name:currentUser.name, role:currentUser.role, subject, message, date:new Date().toLocaleString(), status:"OPEN", reply:"", repliedBy:"" }); audit("Complaint Filed", subject); toast("Complaint sent"); renderComplaints(); }
+function renderComplaintsAdmin(){ const list = db.complaints; $("app").innerHTML = `<div class="card"><div class="card-head"><div><h2>Complaints</h2><p class="muted">From teachers and students.</p></div></div>${list.length ? list.map(c=>`<div class="complaint"><div class="complaint-head"><div><strong>${esc(c.subject)}</strong><br><span class="muted" style="font-size:12px">${esc(c.name)} ·${esc(roleLabel(c.role))} · ${esc(c.date)}</span></div>${statusBadge(c.status)}</div><p>${esc(c.message)}</p>${c.reply ? `<div class="reply"><strong>Reply from ${esc(c.repliedBy)}:</strong><br>${esc(c.reply)}</div>` : ""}<div class="complaint-actions"><button class="btn btn-primary btn-sm" onclick="openReply('${esc(c.id)}')">${c.reply ? "Edit reply" : "Reply"}</button><button class="btn btn-secondary btn-sm" onclick="toggleComplaint('${esc(c.id)}')">${c.status==="OPEN" ? "Mark resolved" : "Reopen"}</button><button class="btn btn-danger btn-sm" onclick="deleteComplaint('${esc(c.id)}')">Delete</button></div></div>`).join("") : `<div class="empty">No complaints yet.</div>`}</div>`; }
+function openReply(id){ if(!can("complaints.manage")) return; const c = db.complaints.find(x => x.id === id); if(!c) return; openModal(`<h3>Reply to ${esc(c.name)}</h3><p class="muted" style="margin-bottom:12px">${esc(c.subject)}</p><div class="field"><label for="r_text">Your reply</label><textarea id="r_text">${esc(c.reply)}</textarea></div><label class="decl"><input type="checkbox" id="r_res" checked> <span>Mark as resolved</span></label><div class="error" id="r_err"></div><div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveReply('${esc(c.id)}')">Send reply</button></div>`); }
+function saveReply(id){ const c = db.complaints.find(x => x.id === id); if(!c) return; const text = $("r_text").value.trim(); if(!text) return $("r_err").textContent = "Write a reply first."; c.reply = text; c.repliedBy = currentUser.name; if($("r_res").checked) c.status = "RESOLVED"; audit("Complaint Replied", c.id); closeModal(); toast("Reply sent"); renderComplaintsAdmin(); }
+function toggleComplaint(id){ if(!can("complaints.manage")) return; const c = db.complaints.find(x => x.id === id); if(!c) return; c.status = c.status === "OPEN" ? "RESOLVED" : "OPEN"; renderComplaintsAdmin(); }
+function deleteComplaint(id){ if(!can("complaints.manage")) return; if(!confirm("Delete this complaint?")) return; db.complaints = db.complaints.filter(x => x.id !== id); toast("Complaint deleted"); renderComplaintsAdmin(); }
+function renderAudit(){ if(!can("audit.read")) return showAccessDenied(); $("app").innerHTML = `<div class="card"><h2>Audit Logs</h2><p class="muted" style="margin:8px 0 20px">Record of sensitive actions</p><div class="table-wrapper"><table><thead><tr><th>Date & Time</th><th>Actor</th><th>Action</th><th>Details</th></tr></thead><tbody>${db.auditLogs.length ? db.auditLogs.map(l=>`<tr><td>${esc(l.timestamp)}</td><td>${esc(l.actor)}</td><td>${esc(l.action)}</td><td style="white-space:normal">${esc(l.details)}</td></tr>`).join("") : `<tr><td colspan="4" class="empty">No activity recorded yet.</td></tr>`}</tbody></table></div></div>`; }
+document.addEventListener("DOMContentLoaded", ()=>{
+  let restored = false;
+  try{ const id = sessionStorage.getItem(SESSION_KEY); const u = id && db.users.find(x => x.id === id); if(u){ currentUser = u; startApp(); restored = true; } }catch(e){}
+  if(!restored) showHome();
+});
+</script>
+</body>
+</html>
